@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:tamirci/core/local_values.dart';
 import 'package:tamirci/core/models/m_service.dart';
 import 'package:tamirci/locale_keys.dart';
-import 'package:tamirci/pages/new_service_page/service_controller.dart';
 import 'package:tamirci/widgets/c_text_field.dart';
+
+import '../service_controller.dart';
 
 class ServiceView extends StatefulWidget {
   const ServiceView({
@@ -44,12 +45,6 @@ class _ServiceViewState extends State<ServiceView>
     _tECProblem.dispose();
     _tECToDone.dispose();
     super.dispose();
-  }
-
-  @override
-  void didUpdateWidget(covariant ServiceView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _setTextControllers();
   }
 
   MService _receiveService(MService s) {

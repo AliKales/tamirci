@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tamirci/core/extensions/ext_list.dart';
 import 'package:tamirci/core/extensions/ext_num.dart';
+import 'package:tamirci/core/models/m_customer.dart';
 import 'package:tamirci/core/models/m_extra_cost.dart';
 import 'package:tamirci/core/models/m_piece.dart';
 
@@ -9,11 +10,12 @@ import '../json_converters.dart';
 
 part 'm_service.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class MService {
   String? customerID;
   String? vehicleMake;
   String? vehicleModel;
+  String? vehicleModelDetail;
   String? chassisNo;
   String? engineNo;
   int? vehicleYear;
@@ -33,10 +35,17 @@ class MService {
   List<MExtraCost>? extraCosts;
   String? plate;
 
+  @JsonKey(
+    includeFromJson: false,
+    includeToJson: false,
+  )
+  MCustomer? customer;
+
   MService({
     this.customerID,
     this.vehicleMake,
     this.vehicleModel,
+    this.vehicleModelDetail,
     this.chassisNo,
     this.engineNo,
     this.vehicleYear,
@@ -62,6 +71,7 @@ class MService {
     String? customerID,
     String? vehicleMake,
     String? vehicleModel,
+    String? vehicleModelDetail,
     String? chassisNo,
     String? engineNo,
     int? vehicleYear,
@@ -81,6 +91,7 @@ class MService {
       customerID: customerID ?? this.customerID,
       vehicleMake: vehicleMake ?? this.vehicleMake,
       vehicleModel: vehicleModel ?? this.vehicleModel,
+      vehicleModelDetail: vehicleModelDetail ?? this.vehicleModelDetail,
       chassisNo: chassisNo ?? this.chassisNo,
       engineNo: engineNo ?? this.engineNo,
       vehicleYear: vehicleYear ?? this.vehicleYear,

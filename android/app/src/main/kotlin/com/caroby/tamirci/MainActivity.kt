@@ -1,4 +1,4 @@
-package com.example.tamirci
+package com.caroby.tamirci
 
 import io.flutter.embedding.android.FlutterActivity
 

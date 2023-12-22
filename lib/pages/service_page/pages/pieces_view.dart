@@ -1,5 +1,6 @@
 import 'package:caroby/caroby.dart';
 import 'package:flutter/material.dart';
+import 'package:tamirci/core/extensions/ext_num.dart';
 import 'package:tamirci/core/local_values.dart';
 import 'package:tamirci/core/models/m_piece.dart';
 import 'package:tamirci/core/models/m_service.dart';
@@ -27,8 +28,6 @@ class _PiecesViewState extends State<PiecesView>
   final _tECQuantity = TextEditingController(text: "1");
   final _tECPrice = TextEditingController();
   final _tECPiece = TextEditingController();
-
-  final _price = ValueNotifier(0.0);
 
   List<MPiece> _listPiece = [];
 
@@ -63,7 +62,6 @@ class _PiecesViewState extends State<PiecesView>
   void _addQuantity() {
     int i = _quantity + 1;
     _tECQuantity.text = i.toString();
-    _onPriceChange(_tECPrice.textTrim);
   }
 
   void _removeQuantity() {
@@ -71,11 +69,6 @@ class _PiecesViewState extends State<PiecesView>
     if (i == 1) return;
     i--;
     _tECQuantity.text = i.toString();
-    _onPriceChange(_tECPrice.textTrim);
-  }
-
-  void _onPriceChange(String t) {
-    _price.value = t.toDouble;
   }
 
   void _add() {
@@ -132,17 +125,8 @@ class _PiecesViewState extends State<PiecesView>
             ),
             CTextField(
               label: LocaleKeys.price,
-              onChanged: _onPriceChange,
               controller: _tECPrice,
-            ),
-            ValueListenableBuilder(
-              valueListenable: _price,
-              builder: (context, val, _) {
-                return Text(
-                  "${LocaleKeys.totalPrice}: $val",
-                  style: context.textTheme.titleMedium,
-                );
-              },
+              inputFormatters: LocalValues.moneyFormatters,
             ),
             CTextField(
               label: LocaleKeys.usedPiece,
@@ -185,7 +169,7 @@ class _Card extends StatelessWidget {
   final VoidCallback onDelete;
 
   int get _quantity => piece.quantity!;
-  double get _price => piece.price!;
+  String get _price => piece.price.moneyFormat;
   String get _piece => piece.piece!;
 
   @override
@@ -196,7 +180,7 @@ class _Card extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
             child: Text(
-              "$_piece\n$_quantity adet\n$_price TL",
+              "$_piece\n$_quantity adet\n$_price",
               style: context.textTheme.titleLarge!
                   .copyWith(fontWeight: FontWeight.normal),
             ),

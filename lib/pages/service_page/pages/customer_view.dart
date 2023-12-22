@@ -22,10 +22,14 @@ class CustomerView extends StatefulWidget {
     super.key,
     required this.customer,
     required this.controller,
+    required this.isNew,
+    required this.onFindCustomer,
   });
 
   final MCustomer customer;
   final CustomerViewController controller;
+  final bool isNew;
+  final VoidCallback onFindCustomer;
 
   @override
   State<CustomerView> createState() => _NewCustomerViewState();
@@ -65,9 +69,13 @@ class _NewCustomerViewState extends State<CustomerView>
   }
 
   MCustomer _receiveCustomer() {
+    final name = _tECName.textTrim.toLowerCase();
+    final surname = _tECLastName.textTrim.toLowerCase();
+    final fullName = (name + surname).replaceAll(" ", "");
     return MCustomer(
-      name: _tECName.textTrim.toLowerCase(),
-      surname: _tECLastName.textTrim.toLowerCase(),
+      name: name,
+      surname: surname,
+      fullName: fullName,
       idNo: _tECIdNo.textTrim.toIntOrNull,
       taxNo: _tECTaxNo.textTrim,
       phone: _tECPhone.textTrim.replaceAll("-", "").toIntOrNull,
@@ -136,13 +144,16 @@ class _NewCustomerViewState extends State<CustomerView>
               label: LocaleKeys.taxNo,
               controller: _tECTaxNo,
               inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9]'))
+                LocalValues.digitsLetters,
               ],
               length: 10,
             ),
-            Buttons(context, LocaleKeys.findCustomer, () {})
-                .filled()
-                .centerAlign,
+            if (widget.isNew)
+              Buttons(
+                context,
+                LocaleKeys.findCustomer,
+                widget.onFindCustomer,
+              ).filled().centerAlign,
             CTextField(
               label: LocaleKeys.name,
               controller: _tECName,

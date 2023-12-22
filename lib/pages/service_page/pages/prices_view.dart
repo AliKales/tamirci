@@ -1,13 +1,17 @@
 import 'package:caroby/caroby.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:money_formatter/money_formatter.dart';
+import 'package:tamirci/core/extensions/ext_num.dart';
 import 'package:tamirci/core/extensions/ext_object.dart';
 import 'package:tamirci/core/local_values.dart';
 import 'package:tamirci/core/models/m_extra_cost.dart';
 import 'package:tamirci/core/models/m_service.dart';
 import 'package:tamirci/locale_keys.dart';
-import 'package:tamirci/pages/new_service_page/service_controller.dart';
 import 'package:tamirci/widgets/buttons.dart';
 import 'package:tamirci/widgets/c_text_field.dart';
+
+import '../service_controller.dart';
 
 class PricesView extends StatefulWidget {
   const PricesView(
@@ -48,9 +52,9 @@ class _PricesViewState extends State<PricesView>
 
   MService _receiveService(MService s) {
     return s.copyWith(
-      totalPrice: _totalPrice,
+      totalPrice: _totalPrice.amount,
       extraCosts: _extras,
-      workCost: _workCost,
+      workCost: _workCost.amount,
     );
   }
 
@@ -90,31 +94,42 @@ class _PricesViewState extends State<PricesView>
     setState(() {});
   }
 
-  double get _totalPrice {
-    return _workCost + _getPiecesPrice + _getExtrasPrice;
+  MoneyFormatter get _totalPrice {
+    final fmf = _workCost
+        .fastCalc(type: FastCalcType.addition, amount: _getExtrasPrice.amount)
+        .fastCalc(type: FastCalcType.addition, amount: _getPiecesPrice.amount);
+
+    return MoneyFormatter(
+      amount: fmf.amount,
+      settings: MoneyFormatterSettings(
+        symbol: "₺",
+      ),
+    );
   }
 
-  double get _workCost {
-    return _tECWorkCost.textTrim.toDouble;
+  MoneyFormatter get _workCost {
+    return MoneyFormatter(amount: _tECWorkCost.textTrim.toDouble);
   }
 
-  double get _getPiecesPrice {
+  MoneyFormatter get _getPiecesPrice {
     final list = _service.usedPieces ?? [];
-    double p = 0;
+    var fmf = MoneyFormatter(amount: 0);
+
     for (var e in list) {
-      p += e.price?.toDouble() ?? 0;
+      fmf = fmf.fastCalc(type: FastCalcType.addition, amount: e.price ?? 0);
     }
 
-    return p;
+    return fmf;
   }
 
-  double get _getExtrasPrice {
-    double p = 0;
+  MoneyFormatter get _getExtrasPrice {
+    var fmf = MoneyFormatter(amount: 0);
+
     for (var e in _extras) {
-      p += e.price?.toDouble() ?? 0;
+      fmf = fmf.fastCalc(type: FastCalcType.addition, amount: e.price ?? 0);
     }
 
-    return p;
+    return fmf;
   }
 
   @override
@@ -131,13 +146,15 @@ class _PricesViewState extends State<PricesView>
               style: context.textTheme.titleLarge,
             ),
             Text(
-              "$_totalPrice TL",
+              "${LocaleKeys.total} ${_totalPrice.output.symbolOnRight}",
               style: context.textTheme.titleLarge,
             ),
             CTextField(
               label: LocaleKeys.workCost,
               onChanged: _onWorkCost,
               controller: _tECWorkCost,
+              keyboardType: TextInputType.number,
+              inputFormatters: LocalValues.moneyFormatters,
             ),
             const Divider(),
             Text(
@@ -147,6 +164,7 @@ class _PricesViewState extends State<PricesView>
             CTextField(
               label: LocaleKeys.price,
               controller: _tECPrice,
+              inputFormatters: LocalValues.moneyFormatters,
             ),
             CTextField(
               label: LocaleKeys.explanation,
@@ -186,7 +204,7 @@ class _Card extends StatelessWidget {
   final VoidCallback onDelete;
 
   String get _text {
-    return "${extraCost.explanation}\n${extraCost.price} TL";
+    return "${extraCost.explanation}\n${extraCost.price.moneyFormat}";
   }
 
   @override

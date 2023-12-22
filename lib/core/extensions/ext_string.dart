@@ -31,3 +31,4 @@ extension ExtString on String {
     return TextSelection.fromPosition(TextPosition(offset: length));
   }
 }
+

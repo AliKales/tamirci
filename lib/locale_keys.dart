@@ -7,12 +7,13 @@ final class LocaleKeys {
   static const lastName = "Soyad";
   static const customer = "Müşteri";
   static const vehicle = "Araç";
-  static const idNo = "Kimlik numarası";
-  static const taxNo = "Vergi numarası";
+  static const idNo = "Kimlik no";
+  static const taxNo = "Vergi no";
   static const plate = "Plaka";
   static const findCustomer = "Müşteriyi bul";
   static const vehicleMake = "Araç markası";
   static const vehicleModel = "Araç modeli";
+  static const vehicleModelDetail = "Araç model detay";
   static const chassisNo = "Şasi no";
   static const engineNo = "Motor no";
   static const vehicleYear = "Üretim yılı";
@@ -46,4 +47,30 @@ final class LocaleKeys {
   static const address = "Adres";
   static const copied = "Kopyalandı";
   static const countryCode = "Ülke kodu";
+  static const pick = "Seç";
+  static const total = "Toplam";
+  static const login = "Giriş yap";
+  static const register = "Kayıt ol";
+  static const email = "Eposta";
+  static const password = "Şifre";
+  static const emailCantEmpty = "Eposta boş olamaz!";
+  static const passwordCantEmpty = "Şifre boş olamaz!";
+  static const passNotMatch = "Şifreler eşleşmiyor!";
+  static const datasGetting = "Veriler alınıyor";
+  static const pass6Length = "Şifre en az 6 karakter olmalı!";
+  static const wrongCredentials = "Eposta ve/veya şifre yanlış";
+  static const invalidEmail = "Yanlış eposta!";
+  static const pleasePayment = "Lütfen ödeme yapınız!";
+  static const nameSurname = "Ad Soyad";
+  static const shopName = "Dükkan Isim";
+  static const pleaseFillBlanks = "Lütfen boşlukları doldurun!";
+  static const createShop = "Dükkan oluştur";
+  static const create = "Oluştur";
+  static const mainPage = "Ana Sayfa";
+  static const unexpectedError = "Beklenmedik bir hata oluştu";
+  static const emailVerification =
+      "Size doğrulama epostası gönderdik. Lütfen epostanızı doğrulayıp tekrar deneyiniz!";
+  static const search = "Ara";
+  static const makeCall = "Telefon et";
+  static const sendIBAN = "IBAN gönder";
 }

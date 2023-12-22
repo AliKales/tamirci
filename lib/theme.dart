@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:caroby/caroby.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -13,7 +12,7 @@ final class CustomTheme {
   ThemeData theme() {
     final cS = _getColorScheme;
 
-    if (Platform.isAndroid) {
+    if (!kIsWeb) {
       SystemChrome.setSystemUIOverlayStyle(
         SystemUiOverlayStyle(
           systemNavigationBarColor: cS.background,

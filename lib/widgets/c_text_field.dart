@@ -17,6 +17,11 @@ class CTextField extends StatelessWidget {
     this.keyboardType,
     this.length,
     this.prefixText,
+    this.textCapitalization = TextCapitalization.none,
+    this.suffixIcon,
+    this.prefixIcon,
+    this.filled = false,
+    this.isHighRadius = false,
   });
 
   final TextEditingController? controller;
@@ -30,6 +35,11 @@ class CTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final TextInputType? keyboardType;
   final String? prefixText;
+  final TextCapitalization textCapitalization;
+  final Widget? suffixIcon;
+  final Widget? prefixIcon;
+  final bool filled;
+  final bool isHighRadius;
 
   TextEditingController? get _controller {
     if (initialValue.isNotEmptyAndNull) {
@@ -49,22 +59,32 @@ class CTextField extends StatelessWidget {
       child: _isSized
           ? SizedBox(
               width: width,
-              child: _textField(),
+              child: _textField(context),
             )
-          : _textField(),
+          : _textField(context),
     );
   }
 
-  TextField _textField() {
+  TextField _textField(BuildContext context) {
     return TextField(
+      textCapitalization: textCapitalization,
       maxLength: length,
       maxLines: maxLines,
       readOnly: readOnly,
       onChanged: (value) => onChanged?.call(value.trim()),
       controller: _controller,
       decoration: InputDecoration(
-          border: const OutlineInputBorder(),
+          border: OutlineInputBorder(
+            borderSide: filled ? BorderSide.none : const BorderSide(),
+            borderRadius: isHighRadius
+                ? BorderRadius.circular(60)
+                : BorderRadius.circular(4),
+          ),
+          filled: filled,
+          fillColor: context.colorScheme.primary.withOpacity(0.1),
           labelText: label,
+          suffixIcon: suffixIcon,
+          prefixIcon: prefixIcon,
           prefixText: prefixText,
           counterText: ""),
       inputFormatters: inputFormatters,
@@ -73,23 +93,62 @@ class CTextField extends StatelessWidget {
   }
 }
 
-class CTextFormatter extends TextInputFormatter {
-  final RegExp regExp;
-
-  const CTextFormatter(this.regExp);
-
+class CMoneyFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
     String newText = newValue.text;
 
-    RegExp regex = regExp;
+    if (oldValue.text.length >= newValue.text.length) {
+      return newValue;
+    }
+
+    final regex = RegExp(r'[0-9]');
+
+    if (!regex.hasMatch(newText)) return oldValue;
+
+    if (newText.split(".").length > 2) return oldValue;
+
+    if (newText.contains(".") && newText.split(".").last.length > 2) {
+      return oldValue;
+    }
+
+    return newValue.copyWith(text: newText);
+  }
+}
+
+class CKilometerFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    String newText = newValue.text.replaceAll(".", "");
+    final regex = RegExp(r'[0-9]*$');
 
     if (!regex.hasMatch(newText)) {
       return oldValue;
     }
 
-    return newValue;
+    int l = newText.length;
+    int howManyDots = l ~/ 3;
+
+    List<String> numbers = [];
+
+    if (l > 3) {
+      for (var i = 0; i < howManyDots; i++) {
+        int index = l - (i * 3);
+        numbers.add(newText.substring(index - 3, index));
+      }
+
+      int remain = l % 3;
+
+      newText = numbers.reversed.join(".");
+
+      if (remain > 0) {
+        newText = "${newValue.text.substring(0, remain)}.$newText";
+      }
+    }
+
+    return newValue.copyWith(text: newText, selection: newText.cursorPosition);
   }
 }
 

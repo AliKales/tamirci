@@ -10,8 +10,9 @@ import 'package:tamirci/core/h_hive.dart';
 import 'package:tamirci/core/local_utils.dart';
 import 'package:tamirci/core/local_values.dart';
 import 'package:tamirci/locale_keys.dart';
-import 'package:tamirci/pages/new_service_page/new_service_page_view.dart';
 import 'package:tamirci/widgets/buttons.dart';
+
+import '../service_page/service_page_view.dart';
 
 class ScannerPageView extends StatefulWidget {
   const ScannerPageView({super.key, this.servicePage});

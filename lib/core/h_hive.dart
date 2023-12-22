@@ -4,7 +4,11 @@ enum HiveBox {
   settings,
 }
 
-enum HiveSettings { lastScanPath }
+enum HiveSettings {
+  lastScanPath,
+  emailVerified,
+  emailVerificationSentAt,
+}
 
 final class HHive {
   const HHive._();
