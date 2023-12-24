@@ -3,26 +3,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tamirci/core/extensions/ext_object.dart';
 import 'package:tamirci/core/extensions/ext_string.dart';
-import 'package:tamirci/core/models/m_service.dart';
+import 'package:tamirci/core/extensions/ext_text_controller.dart';
+import 'package:tamirci/core/models/m_vehicle.dart';
 import 'package:tamirci/locale_keys.dart';
 import 'package:tamirci/widgets/c_dropdown_menu.dart';
 import 'package:tamirci/widgets/c_text_field.dart';
 
 import '../../../core/local_values.dart';
-import '../service_controller.dart';
+
+class VehicleController {
+  MVehicle Function(MVehicle service)? receiveVehicle;
+  VoidCallback? updateTextFields;
+
+  void dispose() {
+    receiveVehicle = null;
+    updateTextFields = null;
+  }
+}
 
 class VehicleView extends StatefulWidget {
   const VehicleView(
       {super.key,
-      required this.service,
+      required this.vehicle,
       required this.controller,
       required this.isNew,
       required this.onSearchPlate});
 
-  final MService service;
-  final ServiceController controller;
+  final MVehicle vehicle;
+  final VehicleController controller;
   final bool isNew;
-  final VoidCallback onSearchPlate;
+  final ValueChanged<String> onSearchPlate;
 
   @override
   State<VehicleView> createState() => _VehicleViewState();
@@ -66,7 +76,9 @@ class _VehicleViewState extends State<VehicleView>
   void initState() {
     super.initState();
     final controller = widget.controller;
-    controller.receiveService = _receiveService;
+    controller.receiveVehicle = _receiveVehicle;
+    controller.updateTextFields = _setTextControllers;
+
     _loadVehicleMakes();
 
     context.afterBuild((p0) => _setTextControllers());
@@ -85,31 +97,31 @@ class _VehicleViewState extends State<VehicleView>
     super.dispose();
   }
 
-  MService _receiveService(MService s) {
-    return s.copyWith(
-      plate: _tECPlate.textTrim.replaceAll(" ", "").toLowerCase(),
-      vehicleMake: _tECVehicleMake.textTrim.toLowerCase(),
-      vehicleModel: _tECVehicleModel.textTrim,
-      vehicleModelDetail: _tECVehicleModelDetail.textTrim,
-      chassisNo: _tECChassisNo.textTrim,
-      engineNo: _tECEngineNo.textTrim,
+  MVehicle _receiveVehicle(MVehicle v) {
+    return v.copyWith(
+      plate: _tECPlate.textTrimOrNull?.replaceAll(" ", "").toLowerCase(),
+      vehicleMake: _tECVehicleMake.textTrimOrNull?.toLowerCase(),
+      vehicleModel: _tECVehicleModel.textTrimOrNull,
+      vehicleModelDetail: _tECVehicleModelDetail.textTrimOrNull,
+      chassisNo: _tECChassisNo.textTrimOrNull,
+      engineNo: _tECEngineNo.textTrimOrNull,
       vehicleYear: _tECVehicleYear.textTrim.toIntOrNull,
-      color: _tECColor.textTrim,
+      color: _tECColor.textTrimOrNull,
       kilometer: _tECKilometer.textTrim.replaceAll(".", "").toIntOrNull,
     );
   }
 
   void _setTextControllers() {
-    _tECPlate.text = widget.service.plate.toStringNull;
-    _tECVehicleMake.text = widget.service.vehicleMake.toStringNull;
-    _tECVehicleModel.text = widget.service.vehicleModel.toStringNull;
+    _tECPlate.text = widget.vehicle.plate.toStringNull;
+    _tECVehicleMake.text = widget.vehicle.vehicleMake.toStringNull;
+    _tECVehicleModel.text = widget.vehicle.vehicleModel.toStringNull;
     _tECVehicleModelDetail.text =
-        widget.service.vehicleModelDetail.toStringNull;
-    _tECChassisNo.text = widget.service.chassisNo.toStringNull;
-    _tECEngineNo.text = widget.service.engineNo.toStringNull;
-    _tECVehicleYear.text = widget.service.vehicleYear.toStringNull;
-    _tECColor.text = widget.service.color.toStringNull;
-    _tECKilometer.text = widget.service.kilometer.toStringNull;
+        widget.vehicle.vehicleModelDetail.toStringNull;
+    _tECChassisNo.text = widget.vehicle.chassisNo.toStringNull;
+    _tECEngineNo.text = widget.vehicle.engineNo.toStringNull;
+    _tECVehicleYear.text = widget.vehicle.vehicleYear.toStringNull;
+    _tECColor.text = widget.vehicle.color.toStringNull;
+    _tECKilometer.text = widget.vehicle.kilometer.toStringNull;
   }
 
   Future<void> _loadVehicleMakes() async {
@@ -131,6 +143,12 @@ class _VehicleViewState extends State<VehicleView>
     );
     if (r == null) return;
     _tECColor.text = _colors[r];
+  }
+
+  void _searchPlate() {
+    String p = _tECPlate.textTrim;
+    if (p.isEmptyOrNull) return;
+    widget.onSearchPlate.call(p);
   }
 
   @override
@@ -158,7 +176,7 @@ class _VehicleViewState extends State<VehicleView>
                 if (widget.isNew) ...[
                   context.sizedBox(width: Values.paddingPageValue),
                   IconButton.filled(
-                    onPressed: () {},
+                    onPressed: _searchPlate,
                     icon: const Icon(Icons.search),
                   ),
                 ],

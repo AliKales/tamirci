@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tamirci/core/extensions/ext_object.dart';
 import 'package:tamirci/core/extensions/ext_string.dart';
+import 'package:tamirci/core/extensions/ext_text_controller.dart';
 import 'package:tamirci/core/local_values.dart';
 import 'package:tamirci/core/models/m_customer.dart';
 import 'package:tamirci/locale_keys.dart';
@@ -10,10 +11,12 @@ import 'package:tamirci/widgets/buttons.dart';
 import 'package:tamirci/widgets/c_text_field.dart';
 
 class CustomerViewController {
-  MCustomer Function()? receiveCustomer;
+  MCustomer Function(MCustomer customer)? receiveCustomer;
+  VoidCallback? updateTexts;
 
   void dispose() {
     receiveCustomer = null;
+    updateTexts = null;
   }
 }
 
@@ -29,7 +32,7 @@ class CustomerView extends StatefulWidget {
   final MCustomer customer;
   final CustomerViewController controller;
   final bool isNew;
-  final VoidCallback onFindCustomer;
+  final ValueChanged<MapEntry<String, Object>> onFindCustomer;
 
   @override
   State<CustomerView> createState() => _NewCustomerViewState();
@@ -52,6 +55,7 @@ class _NewCustomerViewState extends State<CustomerView>
     final controller = widget.controller;
 
     controller.receiveCustomer = _receiveCustomer;
+    controller.updateTexts = _setTextControllers;
 
     context.afterBuild((p0) => _setTextControllers());
   }
@@ -68,19 +72,39 @@ class _NewCustomerViewState extends State<CustomerView>
     super.dispose();
   }
 
-  MCustomer _receiveCustomer() {
-    final name = _tECName.textTrim.toLowerCase();
-    final surname = _tECLastName.textTrim.toLowerCase();
-    final fullName = (name + surname).replaceAll(" ", "");
-    return MCustomer(
+  void _findCustomer() {
+    final phone = _tECPhone.textTrim;
+    final idNo = _tECIdNo.textTrim;
+    final taxNo = _tECTaxNo.textTrim;
+    final fullName = "${_tECName.textTrim}${_tECLastName.textTrim}"
+        .toLowerCase()
+        .removeSpaces;
+
+    if (phone.isNotEmptyAndNull) {
+      widget.onFindCustomer
+          .call(MapEntry("phone", phone.replaceAll("-", "").toInt));
+    } else if (idNo.isNotEmptyAndNull) {
+      widget.onFindCustomer.call(MapEntry("idNo", idNo.toInt));
+    } else if (taxNo.isNotEmptyAndNull) {
+      widget.onFindCustomer.call(MapEntry("taxNo", taxNo));
+    } else if (fullName.isNotEmptyAndNull) {
+      widget.onFindCustomer.call(MapEntry("fullName", phone));
+    }
+  }
+
+  MCustomer _receiveCustomer(MCustomer c) {
+    final name = _tECName.textTrimOrNull?.toLowerCase();
+    final surname = _tECLastName.textTrimOrNull?.toLowerCase();
+    final fullName = ((name ?? "") + (surname ?? ")").replaceAll(" ", ""));
+    return c.copyWith(
       name: name,
       surname: surname,
       fullName: fullName,
       idNo: _tECIdNo.textTrim.toIntOrNull,
-      taxNo: _tECTaxNo.textTrim,
-      phone: _tECPhone.textTrim.replaceAll("-", "").toIntOrNull,
+      taxNo: _tECTaxNo.textTrimOrNull,
+      phone: _tECPhone.textTrimOrNull?.replaceAll("-", "").toIntOrNull,
       phoneCountryCode: _tECCountryCode.textTrim.toIntOrNull,
-      address: _tECAddress.textTrim,
+      address: _tECAddress.textTrimOrNull,
     );
   }
 
@@ -148,12 +172,6 @@ class _NewCustomerViewState extends State<CustomerView>
               ],
               length: 10,
             ),
-            if (widget.isNew)
-              Buttons(
-                context,
-                LocaleKeys.findCustomer,
-                widget.onFindCustomer,
-              ).filled().centerAlign,
             CTextField(
               label: LocaleKeys.name,
               controller: _tECName,
@@ -162,6 +180,12 @@ class _NewCustomerViewState extends State<CustomerView>
               label: LocaleKeys.lastName,
               controller: _tECLastName,
             ),
+            if (widget.isNew)
+              Buttons(
+                context,
+                LocaleKeys.findCustomer,
+                _findCustomer,
+              ).filled().centerAlign,
             CTextField(
               label: LocaleKeys.address,
               maxLines: null,

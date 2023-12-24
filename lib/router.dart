@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tamirci/core/firebase/f_auth.dart';
 import 'package:tamirci/core/models/m_customer.dart';
 import 'package:tamirci/core/models/m_service.dart';
+import 'package:tamirci/core/models/m_vehicle.dart';
 import 'package:tamirci/pages/auth/login_page_view.dart';
 import 'package:tamirci/pages/auth/register_page_view.dart';
 import 'package:tamirci/pages/create_shop_page/create_shop_page_view.dart';
@@ -15,6 +16,7 @@ import 'package:tamirci/pages/loading_page/loading_page_view.dart';
 import 'package:tamirci/pages/main_page/main_page_view.dart';
 import 'package:tamirci/pages/scanner_page/scanner_page_view.dart';
 import 'package:tamirci/pages/search_page/search_page_view.dart';
+import 'package:tamirci/pages/vehicle_page/vehicle_page_view.dart';
 
 import 'pages/service_page/service_page_view.dart';
 
@@ -30,6 +32,7 @@ abstract class PagePaths {
   static String createShop = "/create-shop";
   static String search = "/search";
   static String customer = "/customer";
+  static String vehicle = "/vehicle";
 }
 
 final appRouter = GoRouter(
@@ -53,6 +56,12 @@ final appRouter = GoRouter(
     AppRoute(PagePaths.loading, (s) => const LoadingPageView()),
     AppRoute(PagePaths.createShop, (s) => const CreateShopPageView()),
     AppRoute(PagePaths.search, (s) => const SearchPageView()),
+    AppRoute(
+      PagePaths.vehicle,
+      (s) => VehiclePageView(
+        vehicle: s.extra as MVehicle,
+      ),
+    ),
     AppRoute(
       PagePaths.customer,
       (s) => CustomerPageView(

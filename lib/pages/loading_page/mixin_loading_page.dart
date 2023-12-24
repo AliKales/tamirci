@@ -21,7 +21,7 @@ mixin _MixinLoadingPage<T extends StatefulWidget> on State<T> {
   }
 
   Future<bool> _getUser() async {
-    final r = await FFirestore.get(FirestoreCol.shops, FAuth.uid);
+    final r = await FFirestore.get(FirestoreCol.shops, doc: FAuth.uid);
 
     if (r.hasError) {
       if (r.exception!.code == "permission-denied") {

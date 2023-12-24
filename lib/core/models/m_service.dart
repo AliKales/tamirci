@@ -7,19 +7,14 @@ import 'package:tamirci/core/models/m_extra_cost.dart';
 import 'package:tamirci/core/models/m_piece.dart';
 
 import '../json_converters.dart';
+import 'm_vehicle.dart';
 
 part 'm_service.g.dart';
 
 @JsonSerializable(explicitToJson: true)
 class MService {
+  String? vehicleID;
   String? customerID;
-  String? vehicleMake;
-  String? vehicleModel;
-  String? vehicleModelDetail;
-  String? chassisNo;
-  String? engineNo;
-  int? vehicleYear;
-  String? color;
   int? kilometer;
   @JsonKey(
     fromJson: JsonConvertersFrom.timestampToDate,
@@ -33,23 +28,21 @@ class MService {
   double? totalPrice;
   double? workCost;
   List<MExtraCost>? extraCosts;
-  String? plate;
+  String? customerFullName;
 
   @JsonKey(
     includeFromJson: false,
     includeToJson: false,
   )
   MCustomer? customer;
+  @JsonKey(
+    includeFromJson: false,
+    includeToJson: false,
+  )
+  MVehicle? vehicle;
 
   MService({
-    this.customerID,
-    this.vehicleMake,
-    this.vehicleModel,
-    this.vehicleModelDetail,
-    this.chassisNo,
-    this.engineNo,
-    this.vehicleYear,
-    this.color,
+    this.vehicleID,
     this.kilometer,
     this.createdAt,
     this.customerComplaint,
@@ -59,7 +52,9 @@ class MService {
     this.totalPrice,
     this.workCost,
     this.extraCosts,
-    this.plate,
+    this.customer,
+    this.customerID,
+    this.customerFullName,
   });
 
   factory MService.fromJson(Map<String, dynamic> json) =>
@@ -68,14 +63,7 @@ class MService {
   Map<String, dynamic> toJson() => _$MServiceToJson(this);
 
   MService copyWith({
-    String? customerID,
-    String? vehicleMake,
-    String? vehicleModel,
-    String? vehicleModelDetail,
-    String? chassisNo,
-    String? engineNo,
-    int? vehicleYear,
-    String? color,
+    String? vehicleID,
     int? kilometer,
     DateTime? createdAt,
     String? customerComplaint,
@@ -85,17 +73,10 @@ class MService {
     double? totalPrice,
     double? workCost,
     List<MExtraCost>? extraCosts,
-    String? plate,
+    String? customerFullName,
   }) {
     return MService(
-      customerID: customerID ?? this.customerID,
-      vehicleMake: vehicleMake ?? this.vehicleMake,
-      vehicleModel: vehicleModel ?? this.vehicleModel,
-      vehicleModelDetail: vehicleModelDetail ?? this.vehicleModelDetail,
-      chassisNo: chassisNo ?? this.chassisNo,
-      engineNo: engineNo ?? this.engineNo,
-      vehicleYear: vehicleYear ?? this.vehicleYear,
-      color: color ?? this.color,
+      vehicleID: vehicleID ?? this.vehicleID,
       kilometer: kilometer ?? this.kilometer,
       createdAt: createdAt ?? this.createdAt,
       customerComplaint: customerComplaint ?? this.customerComplaint,
@@ -105,7 +86,7 @@ class MService {
       totalPrice: totalPrice ?? this.totalPrice,
       workCost: workCost ?? this.workCost,
       extraCosts: extraCosts ?? this.extraCosts?.cast<MExtraCost>(),
-      plate: plate ?? this.plate,
+      customerFullName: customerFullName ?? this.customerFullName,
     );
   }
 

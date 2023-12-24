@@ -7,14 +7,7 @@ part of 'm_service.dart';
 // **************************************************************************
 
 MService _$MServiceFromJson(Map<String, dynamic> json) => MService(
-      customerID: json['customerID'] as String?,
-      vehicleMake: json['vehicleMake'] as String?,
-      vehicleModel: json['vehicleModel'] as String?,
-      vehicleModelDetail: json['vehicleModelDetail'] as String?,
-      chassisNo: json['chassisNo'] as String?,
-      engineNo: json['engineNo'] as String?,
-      vehicleYear: json['vehicleYear'] as int?,
-      color: json['color'] as String?,
+      vehicleID: json['vehicleID'] as String?,
       kilometer: json['kilometer'] as int?,
       createdAt:
           JsonConvertersFrom.timestampToDate(json['createdAt'] as Timestamp?),
@@ -29,18 +22,13 @@ MService _$MServiceFromJson(Map<String, dynamic> json) => MService(
       extraCosts: (json['extraCosts'] as List<dynamic>?)
           ?.map((e) => MExtraCost.fromJson(e as Map<String, dynamic>))
           .toList(),
-      plate: json['plate'] as String?,
+      customerID: json['customerID'] as String?,
+      customerFullName: json['customerFullName'] as String?,
     );
 
 Map<String, dynamic> _$MServiceToJson(MService instance) => <String, dynamic>{
+      'vehicleID': instance.vehicleID,
       'customerID': instance.customerID,
-      'vehicleMake': instance.vehicleMake,
-      'vehicleModel': instance.vehicleModel,
-      'vehicleModelDetail': instance.vehicleModelDetail,
-      'chassisNo': instance.chassisNo,
-      'engineNo': instance.engineNo,
-      'vehicleYear': instance.vehicleYear,
-      'color': instance.color,
       'kilometer': instance.kilometer,
       'createdAt': JsonConvertersTo.firestoreTimestamp(instance.createdAt),
       'customerComplaint': instance.customerComplaint,
@@ -50,5 +38,5 @@ Map<String, dynamic> _$MServiceToJson(MService instance) => <String, dynamic>{
       'totalPrice': instance.totalPrice,
       'workCost': instance.workCost,
       'extraCosts': instance.extraCosts?.map((e) => e.toJson()).toList(),
-      'plate': instance.plate,
+      'customerFullName': instance.customerFullName,
     };

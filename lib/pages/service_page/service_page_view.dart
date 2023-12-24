@@ -4,16 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:tamirci/core/extensions/ext_object.dart';
+import 'package:tamirci/core/extensions/ext_string.dart';
 import 'package:tamirci/core/firebase/f_auth.dart';
 import 'package:tamirci/core/firebase/f_firestore.dart';
 import 'package:tamirci/core/models/m_customer.dart';
 import 'package:tamirci/core/models/m_piece.dart';
 import 'package:tamirci/core/models/m_service.dart';
+import 'package:tamirci/core/models/m_vehicle.dart';
 import 'package:tamirci/locale_keys.dart';
 import 'package:tamirci/pages/service_page/pages/pieces_view.dart';
 import 'package:tamirci/pages/service_page/pages/prices_view.dart';
 import 'package:tamirci/pages/service_page/service_controller.dart';
 import 'package:tamirci/router.dart';
+import 'package:tamirci/widgets/buttons.dart';
 
 import 'pages/customer_view.dart';
 import 'pages/service_view.dart';
@@ -53,13 +56,13 @@ class _NewServicePageViewState extends State<ServicePageView>
                 customer: customer,
                 controller: customerController,
                 isNew: isNew,
-                onFindCustomer: () {},
+                onFindCustomer: findCustomer,
               ),
               VehicleView(
-                service: service,
+                vehicle: vehicle,
                 controller: vehicleController,
                 isNew: isNew,
-                onSearchPlate: () {},
+                onSearchPlate: findVehicle,
               ),
               ServiceView(
                 service: service,

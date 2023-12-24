@@ -22,10 +22,12 @@ class CTextField extends StatelessWidget {
     this.prefixIcon,
     this.filled = false,
     this.isHighRadius = false,
+    this.hintText,
   });
 
   final TextEditingController? controller;
   final String? label;
+  final String? hintText;
   final ValueChanged<String>? onChanged;
   final bool readOnly;
   final String? initialValue;
@@ -74,19 +76,21 @@ class CTextField extends StatelessWidget {
       onChanged: (value) => onChanged?.call(value.trim()),
       controller: _controller,
       decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderSide: filled ? BorderSide.none : const BorderSide(),
-            borderRadius: isHighRadius
-                ? BorderRadius.circular(60)
-                : BorderRadius.circular(4),
-          ),
-          filled: filled,
-          fillColor: context.colorScheme.primary.withOpacity(0.1),
-          labelText: label,
-          suffixIcon: suffixIcon,
-          prefixIcon: prefixIcon,
-          prefixText: prefixText,
-          counterText: ""),
+        border: OutlineInputBorder(
+          borderSide: filled ? BorderSide.none : const BorderSide(),
+          borderRadius: isHighRadius
+              ? BorderRadius.circular(60)
+              : BorderRadius.circular(4),
+        ),
+        filled: filled,
+        fillColor: context.colorScheme.primary.withOpacity(0.1),
+        labelText: label,
+        suffixIcon: suffixIcon,
+        prefixIcon: prefixIcon,
+        prefixText: prefixText,
+        counterText: "",
+        hintText: hintText,
+      ),
       inputFormatters: inputFormatters,
       keyboardType: keyboardType,
     );

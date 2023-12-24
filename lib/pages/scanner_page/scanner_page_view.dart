@@ -60,7 +60,7 @@ class _ScannerPageViewState extends State<ScannerPageView> {
     String? path = pathOld;
 
     if (pathOld.isEmptyOrNull) {
-      final r = await ImagePicker().pickImage(source: ImageSource.gallery);
+      final r = await ImagePicker().pickImage(source: ImageSource.camera);
       path = r?.path;
     }
 

@@ -15,6 +15,11 @@ MCustomer _$MCustomerFromJson(Map<String, dynamic> json) => MCustomer(
       idNo: json['idNo'] as int?,
       taxNo: json['taxNo'] as String?,
       address: json['address'] as String?,
+      createdAt:
+          JsonConvertersFrom.timestampToDate(json['createdAt'] as Timestamp?),
+      lastServiceAt: JsonConvertersFrom.timestampToDate(
+          json['lastServiceAt'] as Timestamp?),
+      serviceCount: json['serviceCount'] as int?,
     );
 
 Map<String, dynamic> _$MCustomerToJson(MCustomer instance) => <String, dynamic>{
@@ -26,4 +31,8 @@ Map<String, dynamic> _$MCustomerToJson(MCustomer instance) => <String, dynamic>{
       'idNo': instance.idNo,
       'taxNo': instance.taxNo,
       'address': instance.address,
+      'serviceCount': instance.serviceCount,
+      'createdAt': JsonConvertersTo.firestoreTimestamp(instance.createdAt),
+      'lastServiceAt':
+          JsonConvertersTo.firestoreTimestamp(instance.lastServiceAt),
     };

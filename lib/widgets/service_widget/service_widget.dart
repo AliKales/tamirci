@@ -1,5 +1,6 @@
 import 'package:caroby/caroby.dart';
 import 'package:flutter/material.dart';
+import 'package:tamirci/core/extensions/ext_string.dart';
 import 'package:tamirci/core/models/m_service.dart';
 
 class ServiceWidget extends StatelessWidget {
@@ -20,7 +21,7 @@ class ServiceWidget extends StatelessWidget {
           ListTile(
             onTap: onTap,
             title: Text(
-              service.customer?.getFullName ?? "---",
+              service.customerFullName ?? "---",
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -29,7 +30,7 @@ class ServiceWidget extends StatelessWidget {
           ListTile(
             onTap: onTap,
             title: Text(
-              service.plate?.toUpperCase() ?? "---",
+              service.vehicleID?.withSpaces.toUpperCase() ?? "---",
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

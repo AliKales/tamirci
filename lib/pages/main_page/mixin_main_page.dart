@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 part of 'main_page_view.dart';
 
 mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
@@ -36,8 +38,45 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
     scrollController.animateTo(0, duration: 500.toDuration, curve: Curves.ease);
   }
 
-  void onTap(int i) {
-    context.push(PagePaths.service, extra: services![i]);
+  Future<void> onTap(int i) async {
+    final s = services![i];
+
+    if (s.customer == null) {
+      CustomProgressIndicator.showProgressIndicator(context);
+
+      final r = await FFirestore.get(FirestoreCol.shops,
+          doc: FAuth.uid,
+          subs: [FirestoreSub(col: FirestoreCol.customers, doc: s.customerID)]);
+
+      context.pop();
+      if (r.hasError) {
+        CustomSnackbar.showSnackBar(
+            context: context, text: r.exception?.message ?? "");
+        return;
+      }
+
+      s.customer = MCustomer.fromJson(r.response!.data()!);
+    }
+    if (s.vehicle == null) {
+      CustomProgressIndicator.showProgressIndicator(context);
+
+      final r = await FFirestore.get(FirestoreCol.shops,
+          doc: FAuth.uid,
+          subs: [FirestoreSub(col: FirestoreCol.vehicles, doc: s.vehicleID)]);
+
+      context.pop();
+      if (r.hasError) {
+        CustomSnackbar.showSnackBar(
+            context: context, text: r.exception?.message ?? "");
+        return;
+      }
+
+      s.vehicle = MVehicle.fromJson(r.response!.data()!);
+    }
+
+    services![i] = s;
+
+    context.push(PagePaths.service, extra: s);
   }
 
   void goSearch() {

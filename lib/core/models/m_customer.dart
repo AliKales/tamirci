@@ -1,5 +1,7 @@
 import 'package:caroby/caroby.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tamirci/core/json_converters.dart';
 
 part 'm_customer.g.dart';
 
@@ -13,6 +15,17 @@ class MCustomer {
   int? idNo;
   String? taxNo;
   String? address;
+  int? serviceCount;
+  @JsonKey(
+    fromJson: JsonConvertersFrom.timestampToDate,
+    toJson: JsonConvertersTo.firestoreTimestamp,
+  )
+  DateTime? createdAt;
+  @JsonKey(
+    fromJson: JsonConvertersFrom.timestampToDate,
+    toJson: JsonConvertersTo.firestoreTimestamp,
+  )
+  DateTime? lastServiceAt;
 
   MCustomer({
     this.phone,
@@ -23,6 +36,9 @@ class MCustomer {
     this.idNo,
     this.taxNo,
     this.address,
+    this.createdAt,
+    this.lastServiceAt,
+    this.serviceCount,
   });
 
   factory MCustomer.fromJson(Map<String, dynamic> json) =>
@@ -37,8 +53,11 @@ class MCustomer {
     String? surname,
     String? fullName,
     int? idNo,
+    int? serviceCount,
     String? taxNo,
     String? address,
+    DateTime? lastServiceAt,
+    DateTime? createdAt,
   }) {
     return MCustomer(
       phone: phone ?? this.phone,
@@ -49,6 +68,9 @@ class MCustomer {
       idNo: idNo ?? this.idNo,
       taxNo: taxNo ?? this.taxNo,
       address: address ?? this.address,
+      lastServiceAt: lastServiceAt ?? this.lastServiceAt,
+      createdAt: createdAt ?? this.createdAt,
+      serviceCount: serviceCount ?? this.serviceCount,
     );
   }
 

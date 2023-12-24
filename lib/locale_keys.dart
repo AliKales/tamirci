@@ -73,4 +73,17 @@ final class LocaleKeys {
   static const search = "Ara";
   static const makeCall = "Telefon et";
   static const sendIBAN = "IBAN gönder";
+  static const phoneOnlyDigits = "Telefon numarası sadece sayı içerir!";
+  static const idNoOnlyDigits = "Kimlik numarası sadece sayı içerir!";
+  static const noResult = "Sonuç yok";
+  static const errorFindingVehicle = "Araç tarama sırasında bir hata oluştu";
+  static const kilometerAtService = "Servisteki Kilometre";
+  static const warning = 'Uyarı!';
+  static const wantToUpdateCustomer =
+      'Bu telefon numarası zaten bir müşteriye kayıtlı. Yine de yeni verilerle müşteriyi güncellemek istiyor musunuz?';
+  static const wantToUpdateVehicle =
+      'Bu plaka zaten bir araca kayıtlı. Yine de yeni verilerle aracı güncellemek istiyor musunuz?';
+  static const seeVehicles = "Araçları gör";
+  static const lastService = "Son servis";
+  static const firstService = "İlk servis";
 }
