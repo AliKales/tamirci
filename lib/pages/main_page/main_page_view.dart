@@ -40,7 +40,10 @@ class _MainPageViewState extends State<MainPageView> with _MixinMainPage {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            child: Text(LocalValues.shop?.ownerName ?? "--"),
+            child: Text(
+              LocalValues.shop?.ownerName ?? "--",
+              style: context.textTheme.titleLarge,
+            ),
           ),
           ListTile(
             title: const Text(LocaleKeys.logOut),
