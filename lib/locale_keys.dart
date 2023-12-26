@@ -86,4 +86,17 @@ final class LocaleKeys {
   static const seeVehicles = "Araçları gör";
   static const lastService = "Son servis";
   static const firstService = "İlk servis";
+  static const seeServices = "Servisleri gör";
+  static const more = "Daha fazla";
+  static const iban = "Iban";
+  static const addNewIban = "Yeni iban ekle";
+  static const bankName = "Banka adı";
+  static const ibanCopied = "IBAN kopyalandı";
+  static const ibanExists = "Bu IBAN zaten var";
+  static const phoneCantNull = "Telefon numarası boş bırakılamaz";
+  static const plateCantNull = "Araç plakası boş bırakılamaz";
+  static const thisCustomerAlreadyExistsTryAgain =
+      "Bu müşteri zaten kayıtlı. Müşteri bilgileri otomatik girildi. Lütfen tekrar deneyiniz!";
+  static const thisVehicleAlreadyExistsTryAgain =
+      "Bu araç zaten kayıtlı. Araç bilgileri otomatik girildi. Lütfen tekrar deneyiniz!";
 }

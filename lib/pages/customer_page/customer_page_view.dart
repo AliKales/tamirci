@@ -2,10 +2,13 @@ import 'package:caroby/caroby.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tamirci/core/extensions/ext_string.dart';
 import 'package:tamirci/core/firebase/f_firestore.dart';
+import 'package:tamirci/core/h_hive.dart';
 import 'package:tamirci/core/local_values.dart';
 import 'package:tamirci/core/models/m_customer.dart';
 import 'package:tamirci/core/models/m_vehicle.dart';
+import 'package:tamirci/core/url_launcher.dart';
 import 'package:tamirci/locale_keys.dart';
 import 'package:tamirci/router.dart';
 import 'package:tamirci/widgets/buttons.dart';
@@ -46,7 +49,7 @@ class _CustomerPageViewState extends State<CustomerPageView>
               children: [
                 IconButton.filled(
                   onPressed: () {},
-                  icon: const Icon(Icons.person_4),
+                  icon: const Icon(Icons.person),
                   iconSize: 80,
                 ),
                 const SizedBox(height: 30),
@@ -56,7 +59,7 @@ class _CustomerPageViewState extends State<CustomerPageView>
                   onTap: copyName,
                 ),
                 ListTile(
-                  title: Text(customer.getPhone),
+                  title: Text(customer.getPhone.formatPhone),
                   leading: const Icon(Icons.phone),
                   onTap: copyPhone,
                 ),
@@ -76,17 +79,18 @@ class _CustomerPageViewState extends State<CustomerPageView>
                   onTap: copyAddress,
                 ),
                 const SizedBox(height: 15),
-                Buttons(context, LocaleKeys.makeCall, () {}).filled(),
+                Buttons(context, LocaleKeys.makeCall, makePhoneCall).filled(),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15),
-                  child:
-                      Buttons(context, LocaleKeys.sendIBAN, () {}).outlined(),
+                  child: Buttons(context, LocaleKeys.sendIBAN, sendIban)
+                      .outlined(),
                 ),
                 Buttons(context, LocaleKeys.seeVehicles, seeVehicles).textB(),
                 const SizedBox(height: 15),
                 SizedBox(
                   width: double.maxFinite,
                   child: ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       return VehicleWidget(
                         vehicle: vehicles[index],

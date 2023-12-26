@@ -24,6 +24,8 @@ MService _$MServiceFromJson(Map<String, dynamic> json) => MService(
           .toList(),
       customerID: json['customerID'] as String?,
       customerFullName: json['customerFullName'] as String?,
+      docID: json['docID'] as String?,
+      plate: json['plate'] as String?,
     );
 
 Map<String, dynamic> _$MServiceToJson(MService instance) => <String, dynamic>{
@@ -39,4 +41,5 @@ Map<String, dynamic> _$MServiceToJson(MService instance) => <String, dynamic>{
       'workCost': instance.workCost,
       'extraCosts': instance.extraCosts?.map((e) => e.toJson()).toList(),
       'customerFullName': instance.customerFullName,
+      'plate': instance.plate,
     };

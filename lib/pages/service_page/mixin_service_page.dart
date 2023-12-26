@@ -10,6 +10,8 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
   final serviceController = ServiceController();
   final priceController = ServiceController();
 
+  final showFAB = ValueNotifier(false);
+
   MService service = MService(
     createdAt: DateTime.now(),
   );
@@ -28,6 +30,11 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
   int get currentPage => controller.page?.toInt() ?? 0;
 
   bool isNew = true;
+
+  bool _isCustomerAlreadyChecked = false;
+  bool _shouldSetCustomer = false;
+  bool _isVehicleAlreadyChecked = false;
+  bool _shouldSetVehicle = false;
 
   void initialize(MService? s) {
     if (s != null) {
@@ -88,151 +95,247 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
     service = priceController.receiveService!.call(service);
     service.customer = customer;
 
-    service.customerID = customer.phone.toStringNull;
-    service.vehicleID = vehicle.plate.toStringNull;
-    vehicle.customerID = customer.phone.toStringNull;
-
     service.vehicle = vehicle;
     service.customer = customer;
 
     service.kilometer ??= vehicle.kilometer;
 
     service.customerFullName = customer.getFullName;
+    service.plate = vehicle.plate;
   }
 
   Future<void> onAddNew() async {
     _getDatas();
 
-    CustomProgressIndicator.showProgressIndicator(context);
-
-    final customerResult =
-        await FFirestore.get(FirestoreCol.shops, doc: FAuth.uid, subs: [
-      FirestoreSub(col: FirestoreCol.customers, doc: customer.phone.toString())
-    ]);
-
-    context.pop();
-
-    if (customerResult.hasError) {
+    if (customer.phone == null || customer.phoneCountryCode == null) {
       CustomSnackbar.showSnackBar(
-          context: context, text: 'Error ${customerResult.exception?.message}');
+          context: context, text: LocaleKeys.phoneCantNull);
+      controller.animateToPage(0, duration: 200.toDuration, curve: Curves.ease);
       return;
     }
 
-    bool shouldSetCustomer = isNew;
-
-    if (customerResult.response?.data() != null) {
-      shouldSetCustomer = await CustomDialog.showCustomDialog<bool>(context,
-              title: LocaleKeys.warning,
-              text: LocaleKeys.wantToUpdateCustomer,
-              actions: [
-                Buttons(context, LocaleKeys.no, () => context.pop(false))
-                    .textB(),
-                Buttons(context, LocaleKeys.yes, () => context.pop(true))
-                    .textB(),
-              ]) ??
-          false;
-      if (!shouldSetCustomer) {
-        final c = MCustomer.fromJson(customerResult.response!.data()!);
-        service.customerFullName = c.getFullName;
-      }
-    }
-
-    if (shouldSetCustomer) {
-      CustomProgressIndicator.showProgressIndicator(context);
-
-      final customerResult = await FFirestore.set(
-        FirestoreCol.shops,
-        doc: FAuth.uid,
-        map: customer.toJson(),
-        subs: [
-          FirestoreSub(
-            col: FirestoreCol.customers,
-            doc: customer.phone.toStringNull,
-          ),
-        ],
-      );
-
-      context.pop(service);
-
-      if (customerResult.hasError) {
-        CustomSnackbar.showSnackBar(
-            context: context, text: "Error: ${customerResult.exception?.code}");
-        return;
-      }
-    }
-
-    CustomProgressIndicator.showProgressIndicator(context);
-
-    final vehicleResult = await FFirestore.get(FirestoreCol.shops,
-        doc: FAuth.uid,
-        subs: [FirestoreSub(col: FirestoreCol.vehicles, doc: vehicle.plate)]);
-
-    context.pop();
-
-    if (vehicleResult.hasError) {
+    if (vehicle.plate.isEmptyOrNull) {
       CustomSnackbar.showSnackBar(
-          context: context, text: 'Error ${vehicleResult.exception?.message}');
+          context: context, text: LocaleKeys.plateCantNull);
+
+      controller.animateToPage(1, duration: 200.toDuration, curve: Curves.ease);
       return;
     }
 
-    bool shouldSetVehicle = isNew;
+    if (!_isCustomerAlreadyChecked && await _checkCustomerExist()) return;
 
-    if (vehicleResult.response?.data() != null) {
-      shouldSetVehicle = await CustomDialog.showCustomDialog<bool>(context,
-              title: LocaleKeys.warning,
-              text: LocaleKeys.wantToUpdateVehicle,
-              actions: [
-                Buttons(context, LocaleKeys.no, () => context.pop(false))
-                    .textB(),
-                Buttons(context, LocaleKeys.yes, () => context.pop(true))
-                    .textB(),
-              ]) ??
-          false;
-    }
+    if (_shouldSetCustomer && await _setCustomer()) return;
 
-    if (shouldSetVehicle) {
-      CustomProgressIndicator.showProgressIndicator(context);
+    vehicle.customerID = customer.docID;
+    service.customerID = customer.docID;
 
-      final vehicleResult = await FFirestore.set(FirestoreCol.shops,
-          doc: FAuth.uid,
-          map: vehicle.toJson(),
-          subs: [FirestoreSub(col: FirestoreCol.vehicles, doc: vehicle.plate)]);
+    if (!_isVehicleAlreadyChecked && await _checkVehicle()) return;
 
-      context.pop();
+    if (_shouldSetVehicle && await _setVehicle()) return;
 
-      if (vehicleResult.hasError) {
-        String e = vehicleResult.exception?.message ?? "";
-        CustomSnackbar.showSnackBar(context: context, text: "Error $e");
-        return;
-      }
-    }
+    service.vehicleID = vehicle.docID;
 
+    if (await _setService()) return;
+
+    context.pop(service);
+  }
+
+  Future<bool> _setService() async {
     CustomProgressIndicator.showProgressIndicator(context);
 
-    final serviceResult = await FFirestore.set(
+    final r = await FFirestore.set(
       FirestoreCol.shops,
       doc: FAuth.uid,
       map: service.toJson(),
       subs: [
-        FirestoreSub(
-          col: FirestoreCol.services,
-        ),
+        FirestoreSub(col: FirestoreCol.services),
       ],
     );
 
-    context.pop(service);
+    context.pop();
 
-    if (serviceResult.hasError) {
-      CustomSnackbar.showSnackBar(
-          context: context, text: "Error: ${serviceResult.exception?.code}");
-      return;
+    if (r.hasError) {
+      _error(r);
+      return true;
+    }
+
+    service.docID = r.docID;
+
+    return false;
+  }
+
+  Future<bool> _setVehicle() async {
+    CustomProgressIndicator.showProgressIndicator(context);
+
+    final r = await FFirestore.set(
+      FirestoreCol.shops,
+      doc: FAuth.uid,
+      map: vehicle.toJson(),
+      subs: [
+        FirestoreSub(col: FirestoreCol.vehicles),
+      ],
+    );
+
+    context.pop();
+
+    if (r.hasError) {
+      _error(r);
+      return true;
+    }
+
+    vehicle.docID = r.docID;
+    _shouldSetVehicle = false;
+
+    return false;
+  }
+
+  Future<bool> _setCustomer() async {
+    CustomProgressIndicator.showProgressIndicator(context);
+    final r = await FFirestore.set(
+      FirestoreCol.shops,
+      doc: FAuth.uid,
+      map: customer.toJson(),
+      subs: [
+        FirestoreSub(col: FirestoreCol.customers),
+      ],
+    );
+
+    context.pop();
+
+    if (r.hasError) {
+      _error(r);
+      return true;
+    }
+
+    customer.docID = r.docID;
+
+    _shouldSetCustomer = false;
+
+    return false;
+  }
+
+  Future<bool> _checkCustomerExist() async {
+    CustomProgressIndicator.showProgressIndicator(context);
+
+    final r = await FFirestore.getCustomers(
+        equalTo: MapEntry("phone", customer.phone!), limit: 1);
+
+    context.pop();
+
+    if (r.hasError) {
+      _error(r);
+      return true;
+    }
+
+    _isCustomerAlreadyChecked = true;
+
+    if (r.response.isEmptyOrNull) {
+      _shouldSetCustomer = true;
+      return false;
+    }
+
+    await CustomDialog.showCustomDialog(
+      context,
+      title: LocaleKeys.warning,
+      text: LocaleKeys.thisCustomerAlreadyExistsTryAgain,
+    );
+
+    setState(() {
+      customer = r.response!.first;
+    });
+
+    customerController.updateTexts?.call();
+
+    return true;
+  }
+
+  Future<bool> _checkVehicle() async {
+    CustomProgressIndicator.showProgressIndicator(context);
+
+    final r = await FFirestore.getVehicles(
+        equalTo: MapEntry("plate", vehicle.plate!), limit: 1);
+
+    context.pop();
+
+    if (r.hasError) {
+      _error(r);
+      return true;
+    }
+
+    _isVehicleAlreadyChecked = true;
+
+    if (r.response.isEmptyOrNull) {
+      _shouldSetVehicle = true;
+      return false;
+    }
+
+    await CustomDialog.showCustomDialog(
+      context,
+      title: LocaleKeys.warning,
+      text: LocaleKeys.thisVehicleAlreadyExistsTryAgain,
+    );
+
+    setState(() {
+      vehicle = r.response!.first;
+    });
+
+    vehicleController.updateTextFields?.call();
+
+    return true;
+  }
+
+  Future<void> onUpdate() async {
+    final preCustomer = customer.toJson();
+    final preVehicle = vehicle.toJson();
+    final preService = service.toJson();
+
+    _getDatas();
+
+    CustomProgressIndicator.showProgressIndicator(context);
+
+    if (preCustomer != customer.toJson()) {
+      await FFirestore.update(
+        FirestoreCol.shops,
+        FAuth.uid,
+        customer.toJson(),
+        subs: [
+          FirestoreSub(
+              col: FirestoreCol.customers, doc: customer.phone.toString()),
+        ],
+      );
+    }
+    if (preVehicle != vehicle.toJson()) {
+      await FFirestore.update(
+        FirestoreCol.shops,
+        FAuth.uid,
+        vehicle.toJson(),
+        subs: [
+          FirestoreSub(col: FirestoreCol.vehicles, doc: vehicle.plate),
+        ],
+      );
+    }
+    if (preService != service.toJson()) {
+      await FFirestore.update(
+        FirestoreCol.shops,
+        FAuth.uid,
+        service.toJson(),
+        subs: [
+          FirestoreSub(col: FirestoreCol.services, doc: service.docID),
+        ],
+      );
     }
 
     context.pop(service);
   }
 
-  void onUpdate() {
-    _getDatas();
+  void onPageChanged(int? i) {
+    if (i == null) return;
+
+    if (i == 4) {
+      showFAB.value = true;
+    } else {
+      showFAB.value = false;
+    }
   }
 
   void changePageWeb(bool isNext) {
@@ -357,5 +460,10 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
     await Future.delayed(200.toDuration);
 
     vehicleController.updateTextFields?.call();
+  }
+
+  void _error(FirestoreResponse response) {
+    CustomSnackbar.showSnackBar(
+        context: context, text: "Error ${response.exception?.message}");
   }
 }

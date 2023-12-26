@@ -20,6 +20,7 @@ MCustomer _$MCustomerFromJson(Map<String, dynamic> json) => MCustomer(
       lastServiceAt: JsonConvertersFrom.timestampToDate(
           json['lastServiceAt'] as Timestamp?),
       serviceCount: json['serviceCount'] as int?,
+      docID: json['docID'] as String?,
     );
 
 Map<String, dynamic> _$MCustomerToJson(MCustomer instance) => <String, dynamic>{

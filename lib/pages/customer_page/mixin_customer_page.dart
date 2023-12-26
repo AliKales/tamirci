@@ -10,9 +10,21 @@ mixin _MixinCustomerPage<T extends StatefulWidget> on State<T> {
     customer = c;
   }
 
-  void makePhoneCall() {}
+  void makePhoneCall() {
+    UrlLauncher.makeCall(customer.getPhone);
+  }
 
-  void sendIban() {}
+  Future<void> sendIban() async {
+    final ibans = HHive.getIbans();
+    int? i = await CustomDialog.showDialogRadioList(
+      context,
+      title: LocaleKeys.sendIBAN,
+      items: ibans.map((e) => e.bankName).toList(),
+    );
+    if (i == null) return;
+
+    UrlLauncher.sendSMS(customer.getPhone.removeSpaces, ibans[i].ibanNo);
+  }
 
   Future<void> seeVehicles() async {
     if (vehicles.isNotEmptyAndNull) return;
@@ -61,6 +73,6 @@ mixin _MixinCustomerPage<T extends StatefulWidget> on State<T> {
   }
 
   void goVehicle(int i) {
-    context.push(PagePaths.vehicle, extra: vehicles[i]);
+    context.push(PagePaths.vehicle, extra: MapEntry(customer, vehicles[i]));
   }
 }

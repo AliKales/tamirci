@@ -32,7 +32,14 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
     final r = await context.push<MService>(PagePaths.service);
     if (r == null) return;
 
-    services!.insert(0, r);
+    int i = services!.indexWhere((e) => e.docID == r.docID);
+
+    if (i != -1) {
+      services![i] = r;
+    } else {
+      services!.insert(0, r);
+    }
+
     setState(() {});
     await Future.delayed(200.toDuration);
     scrollController.animateTo(0, duration: 500.toDuration, curve: Curves.ease);
@@ -81,5 +88,9 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
 
   void goSearch() {
     context.push(PagePaths.search);
+  }
+
+  void goIban() {
+    context.push(PagePaths.iban);
   }
 }

@@ -24,8 +24,9 @@ class FirestoreResponse<T> {
   final T? response;
   final FirebaseException? exception;
   final String? docID;
+  final Timestamp? lastDate;
 
-  FirestoreResponse({this.response, this.exception, this.docID});
+  FirestoreResponse({this.response, this.exception, this.docID, this.lastDate});
 
   bool get hasError {
     return exception != null ? true : false;
@@ -34,6 +35,8 @@ class FirestoreResponse<T> {
 
 final class FFirestore {
   const FFirestore._();
+
+  static int _functionCount = 0;
 
   static final _instance = FirebaseFirestore.instance;
 
@@ -60,6 +63,15 @@ final class FFirestore {
   }
 
   static Future<FirestoreResponse<T>> _function<T>(Future function) async {
+    if (_functionCount >= 5000) {
+      return FirestoreResponse(
+          exception: FirebaseException(
+              plugin: "error",
+              code: "limit",
+              message: "Reached function limit"));
+    }
+    _functionCount++;
+
     try {
       T result = await function;
 
@@ -123,9 +135,20 @@ final class FFirestore {
   static Future<FirestoreResponse<bool>> update(
     FirestoreCol col,
     String doc,
-    Map<String, dynamic> map,
-  ) async {
-    final fun = _instance.collection(col.name).doc(doc).update(map);
+    Map<String, dynamic> map, {
+    List<FirestoreSub>? subs,
+  }) async {
+    var ref = _instance.collection(col.name).doc(doc);
+
+    subs ??= [];
+
+    for (var sub in subs) {
+      if (sub.doc.isNotEmptyAndNull) {
+        ref = ref.collection(sub.col.name).doc(sub.doc);
+      }
+    }
+
+    final fun = ref.update(map);
 
     var r = await _function(fun);
 
@@ -160,6 +183,8 @@ final class FFirestore {
       ref = ref.collection(sub.col.name).doc(sub.doc);
     }
 
+    map['docID'] = ref.id;
+
     final fun = ref.set(map);
 
     final r = await _function(fun);
@@ -173,14 +198,21 @@ final class FFirestore {
 
   static Future<FirestoreResponse<List<MService>>> getServices({
     int limit = 5,
-    MapEntry<String, Object>? equalTo,
+    List<MapEntry<String, Object>>? equalTo,
+    DateTime? lastDate,
   }) async {
     var ref = _shopInstance
         .collection(FirestoreCol.services.name)
         .orderBy("createdAt", descending: true);
 
-    if (equalTo != null) {
-      ref = ref.where(equalTo.key, isEqualTo: equalTo.value);
+    if (lastDate != null) {
+      ref = ref.startAfter([Timestamp.fromDate(lastDate)]);
+    }
+
+    if (equalTo.isNotEmptyAndNull) {
+      for (var e in equalTo!) {
+        ref = ref.where(e.key, isEqualTo: e.value);
+      }
     }
 
     final fun = ref.limit(limit).get();
@@ -191,9 +223,20 @@ final class FFirestore {
       return FirestoreResponse(exception: r.exception);
     }
 
-    final services = r.response?.docs.map((e) => MService.fromJson(e.data()));
+    final services = r.response?.docs.map((e) {
+          final s = MService.fromJson(e.data());
+          s.docID = e.id;
+          return s;
+        }).toList() ??
+        [];
 
-    return FirestoreResponse(response: services?.toList() ?? []);
+    Timestamp? lD;
+
+    try {
+      lD = r.response?.docs.last.data()['createdAt'] as Timestamp;
+    } catch (_) {}
+
+    return FirestoreResponse(response: services, lastDate: lD);
   }
 
   static MCustomer? _findCustomerLocal(String id) {
@@ -202,10 +245,11 @@ final class FFirestore {
 
   static Future<FirestoreResponse<List<MCustomer>>> getCustomers({
     required MapEntry<String, Object> equalTo,
+    int limit = 10,
   }) async {
     final fun = _customerInstance
         .where(equalTo.key, isEqualTo: equalTo.value)
-        .limit(10)
+        .limit(limit)
         .get();
 
     final r = await _function<QuerySnapshot<Map<String, dynamic>>>(fun);

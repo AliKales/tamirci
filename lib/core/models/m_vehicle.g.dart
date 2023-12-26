@@ -22,6 +22,7 @@ MVehicle _$MVehicleFromJson(Map<String, dynamic> json) => MVehicle(
       lastServiceAt: JsonConvertersFrom.timestampToDate(
           json['lastServiceAt'] as Timestamp?),
       serviceCount: json['serviceCount'] as int?,
+      docID: json['docID'] as String?,
     );
 
 Map<String, dynamic> _$MVehicleToJson(MVehicle instance) => <String, dynamic>{

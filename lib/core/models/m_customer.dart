@@ -16,6 +16,13 @@ class MCustomer {
   String? taxNo;
   String? address;
   int? serviceCount;
+
+  @JsonKey(
+    includeFromJson: true,
+    includeToJson: false,
+  )
+  String? docID;
+
   @JsonKey(
     fromJson: JsonConvertersFrom.timestampToDate,
     toJson: JsonConvertersTo.firestoreTimestamp,
@@ -39,6 +46,7 @@ class MCustomer {
     this.createdAt,
     this.lastServiceAt,
     this.serviceCount,
+    this.docID,
   });
 
   factory MCustomer.fromJson(Map<String, dynamic> json) =>

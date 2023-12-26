@@ -73,6 +73,10 @@ class _MainPageViewState extends State<MainPageView> with _MixinMainPage {
       title: const Text(LocaleKeys.mainPage),
       actions: [
         IconButton(
+          onPressed: goIban,
+          icon: const Icon(Icons.attach_money_sharp),
+        ),
+        IconButton(
           onPressed: goSearch,
           icon: const Icon(Icons.search),
         ),

@@ -10,6 +10,8 @@ import 'package:tamirci/locale_keys.dart';
 import 'package:tamirci/widgets/buttons.dart';
 import 'package:tamirci/widgets/c_text_field.dart';
 
+import '../../../widgets/phone_text_field.dart';
+
 class CustomerViewController {
   MCustomer Function(MCustomer customer)? receiveCustomer;
   VoidCallback? updateTexts;
@@ -131,32 +133,8 @@ class _NewCustomerViewState extends State<CustomerView>
               LocaleKeys.customer,
               style: context.textTheme.titleLarge,
             ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 0.2.toDynamicWidth(context),
-                  child: CTextField(
-                    label: LocaleKeys.countryCode,
-                    controller: _tECCountryCode,
-                    prefixText: "+",
-                    length: 3,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    ],
-                  ),
-                ),
-                context.sizedBox(width: Values.paddingWidthSmallX),
-                CTextField(
-                  label: LocaleKeys.phone,
-                  controller: _tECPhone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
-                    CPhoneFormatter(_tECCountryCode.textTrim),
-                  ],
-                  keyboardType: TextInputType.number,
-                ).expanded,
-              ],
-            ),
+            PhoneTextField(
+                tECCountryCode: _tECCountryCode, tECPhone: _tECPhone),
             CTextField(
               label: LocaleKeys.idNo,
               controller: _tECIdNo,

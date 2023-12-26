@@ -47,6 +47,7 @@ dependencies:
   money_formatter: ^0.0.5
   firebase_core: ^2.24.2
   firebase_auth: ^4.15.3
+  url_launcher: ^6.2.2
   
 
 dev_dependencies:

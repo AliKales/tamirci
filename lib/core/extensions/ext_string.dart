@@ -62,4 +62,27 @@ extension ExtString on String {
 
     return t.trim();
   }
+
+  String get formatPhone {
+    String newText = this;
+
+    if (!newText.startsWith("+90")) {
+      return newText;
+    } else {
+      newText = newText.replaceFirst("+90", "").trim();
+    }
+
+    if (newText.startsWith("0")) {
+      newText = newText.replaceFirst("0", "");
+    }
+
+    if (newText.length > 3 && newText[3] != "-") {
+      newText = "${newText.substring(0, 3)}-${newText.substring(3)}";
+    }
+    if (newText.length > 7 && newText[7] != "-") {
+      newText = "${newText.substring(0, 7)}-${newText.substringSafe(7, 11)}";
+    }
+
+    return "+90 $newText";
+  }
 }

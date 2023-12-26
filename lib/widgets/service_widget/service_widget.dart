@@ -30,7 +30,7 @@ class ServiceWidget extends StatelessWidget {
           ListTile(
             onTap: onTap,
             title: Text(
-              service.vehicleID?.withSpaces.toUpperCase() ?? "---",
+              service.plate?.withSpaces.toUpperCase() ?? "---",
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),

@@ -29,6 +29,13 @@ class MService {
   double? workCost;
   List<MExtraCost>? extraCosts;
   String? customerFullName;
+  String? plate;
+
+  @JsonKey(
+    includeFromJson: true,
+    includeToJson: false,
+  )
+  String? docID;
 
   @JsonKey(
     includeFromJson: false,
@@ -55,6 +62,8 @@ class MService {
     this.customer,
     this.customerID,
     this.customerFullName,
+    this.docID,
+    this.plate,
   });
 
   factory MService.fromJson(Map<String, dynamic> json) =>

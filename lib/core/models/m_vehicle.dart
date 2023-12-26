@@ -27,6 +27,12 @@ class MVehicle {
   String? plate;
   String? customerID;
   int? serviceCount;
+  
+  @JsonKey(
+    includeFromJson: true,
+    includeToJson: false,
+  )
+  String? docID;
 
   MVehicle({
     this.createdAt,
@@ -42,6 +48,7 @@ class MVehicle {
     this.customerID,
     this.lastServiceAt,
     this.serviceCount,
+    this.docID,
   });
 
   factory MVehicle.fromJson(Map<String, dynamic> json) =>

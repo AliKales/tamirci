@@ -50,6 +50,7 @@ class _NewServicePageViewState extends State<ServicePageView>
       body: Column(
         children: [
           PageView(
+            onPageChanged: onPageChanged,
             controller: controller,
             children: [
               CustomerView(
@@ -113,17 +114,23 @@ class _NewServicePageViewState extends State<ServicePageView>
     );
   }
 
-  FloatingActionButton _fAB() {
-    if (isNew) {
-      return FloatingActionButton.small(
-        onPressed: onAddNew,
-        child: const Icon(Icons.add),
-      );
-    }
+  Widget _fAB() {
+    return ValueListenableBuilder(
+      valueListenable: showFAB,
+      builder: (context, value, child) {
+        if (!value) return const SizedBox.shrink();
+        if (isNew) {
+          return FloatingActionButton.small(
+            onPressed: onAddNew,
+            child: const Icon(Icons.add),
+          );
+        }
 
-    return FloatingActionButton.small(
-      onPressed: onUpdate,
-      child: const Icon(Icons.save_as),
+        return FloatingActionButton.small(
+          onPressed: onUpdate,
+          child: const Icon(Icons.save_as),
+        );
+      },
     );
   }
 
