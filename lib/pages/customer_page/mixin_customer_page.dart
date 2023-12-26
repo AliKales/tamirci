@@ -31,7 +31,7 @@ mixin _MixinCustomerPage<T extends StatefulWidget> on State<T> {
     CustomProgressIndicator.showProgressIndicator(context);
 
     final r = await FFirestore.getVehicles(
-        equalTo: MapEntry("customerID", customer.phone.toString()));
+        equalTo: MapEntry("customerID", customer.docID!));
 
     context.pop();
 

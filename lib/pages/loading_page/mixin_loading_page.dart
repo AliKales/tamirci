@@ -80,4 +80,11 @@ mixin _MixinLoadingPage<T extends StatefulWidget> on State<T> {
 
     return now.difference(last).inMinutes > 5;
   }
+
+  void sendReminder() {
+    const email = "suggestionsandhelp@hotmail.com";
+    const subject = "Tamirci odeme";
+    final body = "Ödeme için bir hatırlatma. Kullanıcı ID: ${FAuth.uid}";
+    UrlLauncher.sendMail(email, subject, body);
+  }
 }

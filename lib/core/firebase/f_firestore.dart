@@ -145,6 +145,14 @@ final class FFirestore {
     for (var sub in subs) {
       if (sub.doc.isNotEmptyAndNull) {
         ref = ref.collection(sub.col.name).doc(sub.doc);
+      } else {
+        return FirestoreResponse(
+          exception: FirebaseException(
+            plugin: "error",
+            code: "wrong-update-path",
+            message: "Update doc can't be null!"
+          ),
+        );
       }
     }
 
@@ -183,7 +191,10 @@ final class FFirestore {
       ref = ref.collection(sub.col.name).doc(sub.doc);
     }
 
-    map['docID'] = ref.id;
+    map['docID'] = doc;
+    if (subs.isNotEmptyAndNull) {
+      map['docID'] = subs.last.doc ?? ref.id;
+    }
 
     final fun = ref.set(map);
 

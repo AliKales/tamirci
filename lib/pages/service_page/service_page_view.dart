@@ -1,9 +1,9 @@
 import 'package:caroby/caroby.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:tamirci/core/extensions/ext_object.dart';
 import 'package:tamirci/core/extensions/ext_string.dart';
 import 'package:tamirci/core/firebase/f_auth.dart';
 import 'package:tamirci/core/firebase/f_firestore.dart';
@@ -16,7 +16,6 @@ import 'package:tamirci/pages/service_page/pages/pieces_view.dart';
 import 'package:tamirci/pages/service_page/pages/prices_view.dart';
 import 'package:tamirci/pages/service_page/service_controller.dart';
 import 'package:tamirci/router.dart';
-import 'package:tamirci/widgets/buttons.dart';
 
 import 'pages/customer_view.dart';
 import 'pages/service_view.dart';

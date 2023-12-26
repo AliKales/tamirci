@@ -6,8 +6,10 @@ import 'package:tamirci/core/firebase/f_firestore.dart';
 import 'package:tamirci/core/h_hive.dart';
 import 'package:tamirci/core/local_values.dart';
 import 'package:tamirci/core/models/m_shop.dart';
+import 'package:tamirci/core/url_launcher.dart';
 import 'package:tamirci/locale_keys.dart';
 import 'package:tamirci/router.dart';
+import 'package:tamirci/widgets/buttons.dart';
 
 part 'mixin_loading_page.dart';
 
@@ -35,15 +37,24 @@ class _LoadingPageViewState extends State<LoadingPageView>
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        isLoading
-            ? const CircularProgressIndicator().center
-            : Text(
-                message,
-                style: context.textTheme.titleLarge,
-                textAlign: TextAlign.center,
-              ).center
+        isLoading ? const CircularProgressIndicator().center : _messageWidget()
       ],
     );
+  }
+
+  Widget _messageWidget() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Text(
+          message,
+          style: context.textTheme.titleLarge,
+          textAlign: TextAlign.center,
+        ).center,
+        Buttons(context, LocaleKeys.remind, sendReminder).filled(),
+        Text(LocaleKeys.remindInfo, style: context.textTheme.titleMedium),
+      ],
+    ).expanded;
   }
 
   AppBar _appBar() {

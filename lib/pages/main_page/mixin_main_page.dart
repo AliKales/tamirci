@@ -83,7 +83,11 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
 
     services![i] = s;
 
-    context.push(PagePaths.service, extra: s);
+    final r = await context.push<MService>(PagePaths.service, extra: s);
+
+    if (r != null) {
+      services![i] = r;
+    }
   }
 
   void goSearch() {
@@ -92,5 +96,16 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
 
   void goIban() {
     context.push(PagePaths.iban);
+  }
+
+  Future<void> logOut() async {
+    final r = await FAuth.signOut();
+
+    if (r.isNotEmptyAndNull) {
+      CustomSnackbar.showSnackBar(context: context, text: r ?? "Error");
+      return;
+    }
+
+    context.go("/");
   }
 }

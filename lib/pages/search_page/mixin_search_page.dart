@@ -4,7 +4,7 @@ part of 'search_page_view.dart';
 
 enum _Filter {
   plate(LocaleKeys.plate),
-  customerID(LocaleKeys.phone),
+  phone(LocaleKeys.phone),
   idNo(LocaleKeys.idNo),
   taxNo(LocaleKeys.taxNo),
   name(LocaleKeys.name),
@@ -67,8 +67,8 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
     switch (selectedFilter) {
       case _Filter.plate:
         _searchVehicle(MapEntry("plate", _getPlate(text)));
-      case _Filter.customerID:
-        _searchByCustomerID(text);
+      case _Filter.phone:
+        _searchByCustomerPhone(text);
       case _Filter.idNo:
         _searchByIdNo(text);
       case _Filter.name:
@@ -113,23 +113,25 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
     await _searchCustomer(MapEntry("idNo", text.toInt));
   }
 
-  Future<void> _searchByCustomerID(String text) async {
+  Future<void> _searchByCustomerPhone(String text) async {
     if (!RegExp(r'[0-9]').hasMatch(text)) {
       _error(LocaleKeys.phoneOnlyDigits);
       return;
     }
 
-    FirestoreResponse<MCustomer>? response;
+    FirestoreResponse<List<MCustomer>>? response;
 
     CustomProgressIndicator.showProgressIndicator(context);
 
     if (text.startsWith("0")) {
       String newText = text.replaceFirst("0", "");
-      response = await FFirestore.getCustomer(id: newText);
+      response = await FFirestore.getCustomers(
+          equalTo: MapEntry("phone", newText.toInt));
     }
 
     if (response == null || response.response == null) {
-      response = await FFirestore.getCustomer(id: text);
+      response =
+          await FFirestore.getCustomers(equalTo: MapEntry("phone", text.toInt));
     }
 
     context.pop();
@@ -145,7 +147,7 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
     }
 
     setState(() {
-      customers.add(response!.response!);
+      customers.addAll(response!.response!);
     });
 
     _scrollToEnd();

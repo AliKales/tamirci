@@ -34,8 +34,8 @@ class _VehiclePageViewState extends State<VehiclePageView> {
 
     final r = await FFirestore.getServices(
       equalTo: [
-        MapEntry("vehicleID", _vehicle.plate!),
-        MapEntry("customerID", _customer.phone.toString()),
+        MapEntry("vehicleID", _vehicle.docID!),
+        MapEntry("customerID", _customer.docID!),
       ],
       limit: 5,
       lastDate: _services?.last.createdAt,
@@ -159,7 +159,7 @@ class _VehiclePageViewState extends State<VehiclePageView> {
             shrinkWrap: true,
           ),
         ),
-        if (!_noMore)
+        if (!_noMore && _services.isNotEmptyAndNull)
           Buttons(
             context,
             LocaleKeys.more,

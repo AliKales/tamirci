@@ -26,9 +26,28 @@ class _MainPageViewState extends State<MainPageView> with _MixinMainPage {
     return Scaffold(
       appBar: _appBar(),
       floatingActionButton: _fAB(),
+      drawer: _drawer(),
       body: Padding(
         padding: LocalValues.paddingPage(context),
         child: services == null ? _loadBody() : _mainBody(),
+      ),
+    );
+  }
+
+  Drawer _drawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            child: Text(LocalValues.shop?.ownerName ?? "--"),
+          ),
+          ListTile(
+            title: const Text(LocaleKeys.logOut),
+            onTap: logOut,
+            leading: const Icon(Icons.logout_outlined),
+          ),
+        ],
       ),
     );
   }

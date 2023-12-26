@@ -40,7 +40,7 @@ abstract class PagePaths {
 final appRouter = GoRouter(
   initialLocation: PagePaths.loading,
   redirect: (context, state) {
-    if (!FAuth.isLoggedIn) {
+    if (!FAuth.isLoggedIn && state.fullPath != PagePaths.register) {
       return PagePaths.login;
     }
     return null;

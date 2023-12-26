@@ -19,4 +19,8 @@ final class UrlLauncher {
 
     launchUrl(smsLaunchUri);
   }
+
+  static void sendMail(String email, String subject, String body) {
+    launchUrlString("mailto:$email?subject=$subject&body=$body");
+  }
 }

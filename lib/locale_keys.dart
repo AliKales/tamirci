@@ -99,4 +99,11 @@ final class LocaleKeys {
       "Bu müşteri zaten kayıtlı. Müşteri bilgileri otomatik girildi. Lütfen tekrar deneyiniz!";
   static const thisVehicleAlreadyExistsTryAgain =
       "Bu araç zaten kayıtlı. Araç bilgileri otomatik girildi. Lütfen tekrar deneyiniz!";
+  static const nothingChanged = "Hiç birşey değişmedi!";
+  static const logOut = "Çıkış yap";
+  static const phoneIsImportant =
+      "Lütfen telefon numaranızın doğru olduğundan emin olun çünkü ödeme için sizle iletişime geçeceğiz!";
+  static const remind = "Hatırlat";
+  static const remindInfo =
+      "Lütfen bize bir eposta gönderin ki en hızlı şekilde yardımcı olalım! Lütfen yukarıdaki HATIRLAT butonuna basınız!";
 }

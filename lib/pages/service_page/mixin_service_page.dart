@@ -33,8 +33,14 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
 
   bool _isCustomerAlreadyChecked = false;
   bool _shouldSetCustomer = false;
+  bool _customerExists = false;
+
   bool _isVehicleAlreadyChecked = false;
   bool _shouldSetVehicle = false;
+  bool _vehicleExists = false;
+
+  String? _customerID;
+  String? _vehicleID;
 
   void initialize(MService? s) {
     if (s != null) {
@@ -89,8 +95,13 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
   }
 
   void _getDatas() {
-    customer = customerController.receiveCustomer!.call(customer);
-    vehicle = vehicleController.receiveVehicle!.call(vehicle);
+    if (!_customerExists) {
+      customer = customerController.receiveCustomer!.call(customer);
+    }
+    if (!_vehicleExists) {
+      vehicle = vehicleController.receiveVehicle!.call(vehicle);
+    }
+
     service = serviceController.receiveService!.call(service);
     service = priceController.receiveService!.call(service);
     service.customer = customer;
@@ -102,6 +113,9 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
 
     service.customerFullName = customer.getFullName;
     service.plate = vehicle.plate;
+
+    service.customerID = customer.docID;
+    service.vehicleID = vehicle.docID;
   }
 
   Future<void> onAddNew() async {
@@ -122,20 +136,54 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
       return;
     }
 
-    if (!_isCustomerAlreadyChecked && await _checkCustomerExist()) return;
+    if (!_isCustomerAlreadyChecked &&
+        !_customerExists &&
+        await _checkCustomerExist()) return;
 
     if (_shouldSetCustomer && await _setCustomer()) return;
 
-    vehicle.customerID = customer.docID;
-    service.customerID = customer.docID;
+    _customerID ??= customer.docID;
+    vehicle.customerID = customer.docID ?? _customerID;
+    service.customerID ??= customer.docID ?? _customerID;
 
-    if (!_isVehicleAlreadyChecked && await _checkVehicle()) return;
+    if (!_isVehicleAlreadyChecked &&
+        !_vehicleExists &&
+        await _checkVehicleExist()) return;
 
     if (_shouldSetVehicle && await _setVehicle()) return;
 
-    service.vehicleID = vehicle.docID;
+    _vehicleID ??= vehicle.docID;
+    service.vehicleID ??= vehicle.docID ?? _vehicleID;
 
     if (await _setService()) return;
+
+    if (_customerExists && customer.docID.isNotEmptyAndNull) {
+      FFirestore.update(
+        FirestoreCol.shops,
+        FAuth.uid,
+        {
+          'lastServiceAt': FieldValue.serverTimestamp(),
+          'serviceCount': FieldValue.increment(1),
+        },
+        subs: [
+          FirestoreSub(col: FirestoreCol.customers, doc: customer.docID),
+        ],
+      );
+    }
+
+    if (_vehicleExists && vehicle.docID.isNotEmptyAndNull) {
+      FFirestore.update(
+        FirestoreCol.shops,
+        FAuth.uid,
+        {
+          'lastServiceAt': FieldValue.serverTimestamp(),
+          'serviceCount': FieldValue.increment(1),
+        },
+        subs: [
+          FirestoreSub(col: FirestoreCol.vehicles, doc: vehicle.docID),
+        ],
+      );
+    }
 
     context.pop(service);
   }
@@ -244,12 +292,16 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
       customer = r.response!.first;
     });
 
+    _customerID = r.response?.first.docID;
+
     customerController.updateTexts?.call();
+
+    _customerExists = true;
 
     return true;
   }
 
-  Future<bool> _checkVehicle() async {
+  Future<bool> _checkVehicleExist() async {
     CustomProgressIndicator.showProgressIndicator(context);
 
     final r = await FFirestore.getVehicles(
@@ -279,53 +331,61 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
       vehicle = r.response!.first;
     });
 
+    _vehicleID = vehicle.docID;
+
     vehicleController.updateTextFields?.call();
+
+    _vehicleExists = true;
 
     return true;
   }
 
   Future<void> onUpdate() async {
-    final preCustomer = customer.toJson();
-    final preVehicle = vehicle.toJson();
-    final preService = service.toJson();
+    final preService = _getServiceMapForUpdate(service);
+
+    final doc = service.docID;
 
     _getDatas();
 
-    CustomProgressIndicator.showProgressIndicator(context);
+    final newService = _getServiceMapForUpdate(service);
 
-    if (preCustomer != customer.toJson()) {
-      await FFirestore.update(
+    if (preService != newService) {
+      CustomProgressIndicator.showProgressIndicator(context);
+
+      final r = await FFirestore.update(
         FirestoreCol.shops,
         FAuth.uid,
-        customer.toJson(),
+        newService,
         subs: [
-          FirestoreSub(
-              col: FirestoreCol.customers, doc: customer.phone.toString()),
+          FirestoreSub(col: FirestoreCol.services, doc: doc),
         ],
       );
-    }
-    if (preVehicle != vehicle.toJson()) {
-      await FFirestore.update(
-        FirestoreCol.shops,
-        FAuth.uid,
-        vehicle.toJson(),
-        subs: [
-          FirestoreSub(col: FirestoreCol.vehicles, doc: vehicle.plate),
-        ],
-      );
-    }
-    if (preService != service.toJson()) {
-      await FFirestore.update(
-        FirestoreCol.shops,
-        FAuth.uid,
-        service.toJson(),
-        subs: [
-          FirestoreSub(col: FirestoreCol.services, doc: service.docID),
-        ],
-      );
+
+      context.pop();
+
+      if (r.hasError) {
+        _error(r);
+        return;
+      }
+    } else {
+      CustomSnackbar.showSnackBar(
+          context: context, text: LocaleKeys.nothingChanged);
+      return;
     }
 
     context.pop(service);
+  }
+
+  Map<String, dynamic> _getServiceMapForUpdate(MService s) {
+    final j = s.toJson();
+
+    if (j.containsKey("vehicleID")) j.remove("vehicleID");
+    if (j.containsKey("customerID")) j.remove("customerID");
+    if (j.containsKey("createdAt")) j.remove("createdAt");
+    if (j.containsKey("plate")) j.remove("plate");
+    if (j.containsKey("customerFullName")) j.remove("customerFullName");
+
+    return j;
   }
 
   void onPageChanged(int? i) {
@@ -357,10 +417,10 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
   }
 
   Future<void> findCustomer(MapEntry<String, Object> where) async {
-    await _getCustomer(where);
-    if (customer.phone != null) {
-      await _getVehicle(
-          MapEntry("customerID", customer.phone.toString()), true);
+    if (await _getCustomer(where)) {
+      _customerExists = true;
+      _vehicleExists =
+          await _getVehicle(MapEntry("customerID", customer.docID!), true);
     }
   }
 
@@ -368,10 +428,11 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
     await _getVehicle(
         MapEntry("plate", plate.removeSpaces.toLowerCase()), false);
     if (vehicle.customerID.isEmptyOrNull) return;
-    await _getCustomer(MapEntry("phone", vehicle.customerID.toInt));
+    _customerExists =
+        await _getCustomer(MapEntry("docID", vehicle.customerID!));
   }
 
-  Future<void> _getCustomer(MapEntry<String, Object> where) async {
+  Future<bool> _getCustomer(MapEntry<String, Object> where) async {
     CustomProgressIndicator.showProgressIndicator(context);
     final r = await FFirestore.getCustomers(equalTo: where);
     context.pop();
@@ -379,12 +440,12 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
     if (r.hasError) {
       CustomSnackbar.showSnackBar(
           context: context, text: r.exception?.message ?? "Error");
-      return;
+      return false;
     }
 
     if (r.response.isEmptyOrNull) {
       CustomSnackbar.showSnackBar(context: context, text: LocaleKeys.noResult);
-      return;
+      return false;
     }
 
     final list = r.response!;
@@ -404,9 +465,11 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
     await Future.delayed(200.toDuration);
 
     customerController.updateTexts!.call();
+
+    return true;
   }
 
-  Future<void> _getVehicle(MapEntry<String, Object> where, bool ask) async {
+  Future<bool> _getVehicle(MapEntry<String, Object> where, bool ask) async {
     CustomProgressIndicator.showProgressIndicator(context);
     final r = await FFirestore.getVehicles(limit: 1, equalTo: where);
     context.pop();
@@ -414,14 +477,14 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
     if (r.hasError) {
       CustomSnackbar.showSnackBar(
           context: context, text: LocaleKeys.errorFindingVehicle);
-      return;
+      return false;
     }
 
     final list = r.response;
 
     if (list.isEmptyOrNull) {
       CustomSnackbar.showSnackBar(context: context, text: LocaleKeys.noResult);
-      return;
+      return false;
     }
 
     list!.insert(
@@ -439,27 +502,18 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
             list.map((e) => e.plate?.withSpaces.toUpperCase() ?? "-").toList(),
       );
 
-      if (i == null || i == 0) return;
+      if (i == null || i == 0) return false;
     }
 
-    final s = list.last;
-
-    vehicle.plate = s.plate;
-    vehicle.vehicleMake = s.vehicleMake;
-    vehicle.vehicleModel = s.vehicleModel;
-    vehicle.vehicleModelDetail = s.vehicleModelDetail;
-    vehicle.chassisNo = s.chassisNo;
-    vehicle.engineNo = s.engineNo;
-    vehicle.vehicleYear = s.vehicleYear;
-    vehicle.color = s.color;
-    vehicle.kilometer = s.kilometer;
-    vehicle.customerID = s.customerID;
+    vehicle = list.last;
 
     setState(() {});
 
     await Future.delayed(200.toDuration);
 
     vehicleController.updateTextFields?.call();
+
+    return true;
   }
 
   void _error(FirestoreResponse response) {

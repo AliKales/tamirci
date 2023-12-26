@@ -7,6 +7,7 @@ part 'm_shop.g.dart';
 class MShop {
   String? ownerName;
   String? shopName;
+  String? phone;
   @JsonKey(
     fromJson: JsonConvertersFrom.timestampToDate,
     toJson: JsonConvertersTo.firestoreTimestamp,
@@ -17,6 +18,7 @@ class MShop {
   MShop({
     this.ownerName,
     this.shopName,
+    this.phone,
     this.createdAt,
     this.available,
   });
@@ -28,12 +30,14 @@ class MShop {
   MShop copyWith({
     String? ownerName,
     String? shopName,
+    String? phone,
     DateTime? createdAt,
     bool? available,
   }) {
     return MShop(
       ownerName: ownerName ?? this.ownerName,
       shopName: shopName ?? this.shopName,
+      phone: phone ?? this.phone,
       createdAt: createdAt ?? this.createdAt,
       available: available ?? this.available,
     );

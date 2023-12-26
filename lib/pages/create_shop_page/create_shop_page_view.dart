@@ -22,19 +22,22 @@ class CreateShopPageView extends StatefulWidget {
 class _CreateShopPageViewState extends State<CreateShopPageView> {
   final _tECName = TextEditingController();
   final _tECShopName = TextEditingController();
+  final _tECPhone = TextEditingController();
 
   @override
   void dispose() {
     _tECName.dispose();
     _tECShopName.dispose();
+    _tECPhone.dispose();
     super.dispose();
   }
 
   Future<void> _add() async {
     final name = _tECName.textTrim;
     final shopName = _tECShopName.textTrim;
+    final phone = _tECPhone.textTrim;
 
-    if (name.isEmptyOrNull || shopName.isEmptyOrNull) {
+    if (name.isEmptyOrNull || shopName.isEmptyOrNull || phone.isEmptyOrNull) {
       CustomSnackbar.showSnackBar(
           context: context, text: LocaleKeys.pleaseFillBlanks);
       return;
@@ -43,6 +46,7 @@ class _CreateShopPageViewState extends State<CreateShopPageView> {
     final shop = MShop(
       ownerName: name,
       shopName: shopName,
+      phone: phone,
       available: false,
       createdAt: DateTime.now(),
     );
@@ -76,6 +80,14 @@ class _CreateShopPageViewState extends State<CreateShopPageView> {
             CTextField(
               label: LocaleKeys.shopName,
               controller: _tECShopName,
+            ),
+            CTextField(
+              label: LocaleKeys.phone,
+              controller: _tECPhone,
+            ),
+            Text(
+              LocaleKeys.phoneIsImportant,
+              style: context.textTheme.titleMedium,
             ),
             Buttons(context, LocaleKeys.create, _add).filled(),
           ],
