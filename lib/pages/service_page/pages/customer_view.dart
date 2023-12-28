@@ -78,9 +78,9 @@ class _NewCustomerViewState extends State<CustomerView>
     final phone = _tECPhone.textTrim;
     final idNo = _tECIdNo.textTrim;
     final taxNo = _tECTaxNo.textTrim;
-    final fullName = "${_tECName.textTrim}${_tECLastName.textTrim}"
-        .toLowerCase()
-        .removeSpaces;
+    final name = _tECName.textTrim.singleSpace.toLowerCase();
+    final surname = _tECLastName.textTrim.singleSpace.toLowerCase();
+    final fullName = "$name$surname".toLowerCase().removeSpaces;
 
     if (phone.isNotEmptyAndNull) {
       widget.onFindCustomer
@@ -89,15 +89,19 @@ class _NewCustomerViewState extends State<CustomerView>
       widget.onFindCustomer.call(MapEntry("idNo", idNo.toInt));
     } else if (taxNo.isNotEmptyAndNull) {
       widget.onFindCustomer.call(MapEntry("taxNo", taxNo));
+    } else if (name.isNotEmptyAndNull && surname.isEmptyOrNull) {
+      widget.onFindCustomer.call(MapEntry("name", name));
+    } else if (surname.isNotEmptyAndNull && name.isEmptyOrNull) {
+      widget.onFindCustomer.call(MapEntry("surname", surname));
     } else if (fullName.isNotEmptyAndNull) {
-      widget.onFindCustomer.call(MapEntry("fullName", phone));
+      widget.onFindCustomer.call(MapEntry("fullName", fullName));
     }
   }
 
   MCustomer _receiveCustomer(MCustomer c) {
-    final name = _tECName.textTrimOrNull?.toLowerCase();
-    final surname = _tECLastName.textTrimOrNull?.toLowerCase();
-    final fullName = ((name ?? "") + (surname ?? ")").replaceAll(" ", ""));
+    final name = _tECName.textTrimOrNull?.singleSpace.toLowerCase();
+    final surname = _tECLastName.textTrimOrNull?.singleSpace.toLowerCase();
+    final fullName = ((name ?? "") + (surname ?? "").replaceAll(" ", ""));
     return c.copyWith(
       name: name,
       surname: surname,

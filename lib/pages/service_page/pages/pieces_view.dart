@@ -125,6 +125,7 @@ class _PiecesViewState extends State<PiecesView>
             ),
             CTextField(
               label: LocaleKeys.price,
+              keyboardType: TextInputType.number,
               controller: _tECPrice,
               inputFormatters: LocalValues.moneyFormatters,
             ),

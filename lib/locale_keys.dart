@@ -37,7 +37,6 @@ final class LocaleKeys {
   static const yes = "Evet";
   static const no = "Hayır";
   static const textScanner = "Yazı okuyucu";
-  static const useOldImage = "Bir önceki görseli kullanmak ister misiniz?";
   static const lineGroup = "Satır / Grup";
   static const workCost = "İşçilik";
   static const extraCost = "Ek ücret";
@@ -106,4 +105,7 @@ final class LocaleKeys {
   static const remind = "Hatırlat";
   static const remindInfo =
       "Lütfen bize bir eposta gönderin ki en hızlı şekilde yardımcı olalım! Lütfen yukarıdaki HATIRLAT butonuna basınız!";
+  static const camera = "Kamera";
+  static const gallery = "Galeri";
+  static const seeImage = "Görseli gör";
 }

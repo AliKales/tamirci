@@ -169,6 +169,8 @@ class CPhoneFormatter extends TextInputFormatter {
     if (_isTurkish) {
       if (newText.startsWith("0")) {
         newText = newText.replaceFirst("0", "");
+      } else if (newText.startsWith("90")) {
+        newText = newText.replaceFirst("90", "");
       }
 
       if (newText.length > 3 && newText[3] != "-") {

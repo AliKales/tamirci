@@ -7,4 +7,8 @@ void main() {
 
     expect(null, r);
   });
+
+  test("String Ext", () {
+    print("     Ali       Kaleş".singleSpace);
+  });
 }

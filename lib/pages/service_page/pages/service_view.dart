@@ -56,7 +56,7 @@ class _ServiceViewState extends State<ServiceView>
       customerComplaint: _tECCustomerComplaint.textTrimOrNull,
       problem: _tECProblem.textTrimOrNull,
       toDone: _tECToDone.textTrimOrNull,
-      kilometer: _tECKilometer.text.toIntOrNull,
+      kilometer: _tECKilometer.textTrim.replaceAll(".", "").toIntOrNull,
     );
   }
 

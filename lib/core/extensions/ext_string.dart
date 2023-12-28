@@ -28,6 +28,10 @@ extension ExtStringNull on String? {
   String get removeSpaces {
     return this?.replaceAll(" ", "") ?? "";
   }
+
+  String get singleSpace {
+    return this?.trim().replaceAll(RegExp(r"\s+"), " ") ?? "";
+  }
 }
 
 extension ExtString on String {

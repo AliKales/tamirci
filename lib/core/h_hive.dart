@@ -8,6 +8,7 @@ enum HiveBox {
 
 enum HiveSettings {
   lastScanPath,
+  lastAskedScanPath,
   emailVerified,
   emailVerificationSentAt,
   ibans,
@@ -22,6 +23,7 @@ final class HHive {
     await Hive.initFlutter();
     _settings = await Hive.openBox(HiveBox.settings.name);
     putSettings(HiveSettings.lastScanPath, null);
+    putSettings(HiveSettings.lastAskedScanPath, null);
   }
 
   static dynamic getSettings(HiveSettings settings) {

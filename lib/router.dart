@@ -13,6 +13,7 @@ import 'package:tamirci/pages/auth/register_page_view.dart';
 import 'package:tamirci/pages/create_shop_page/create_shop_page_view.dart';
 import 'package:tamirci/pages/customer_page/customer_page_view.dart';
 import 'package:tamirci/pages/iban_page/iban_page_view.dart';
+import 'package:tamirci/pages/image_page/image_page_view.dart';
 import 'package:tamirci/pages/loading_page/loading_page_view.dart';
 import 'package:tamirci/pages/main_page/main_page_view.dart';
 import 'package:tamirci/pages/scanner_page/scanner_page_view.dart';
@@ -35,6 +36,7 @@ abstract class PagePaths {
   static String customer = "/customer";
   static String vehicle = "/vehicle";
   static String iban = "/iban";
+  static String image = "/image";
 }
 
 final appRouter = GoRouter(
@@ -59,6 +61,12 @@ final appRouter = GoRouter(
     AppRoute(PagePaths.createShop, (s) => const CreateShopPageView()),
     AppRoute(PagePaths.search, (s) => const SearchPageView()),
     AppRoute(PagePaths.iban, (s) => const IbanPageView()),
+    AppRoute(
+      PagePaths.image,
+      (s) => ImagePageView(
+        m: s.extra as MImagePage,
+      ),
+    ),
     AppRoute(
       PagePaths.vehicle,
       (s) => VehiclePageView(

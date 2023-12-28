@@ -64,20 +64,8 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
   Future<void> _onScan() async {
     final page = controller.page!.toInt();
 
-    final r = await context.push<List<MapEntry<String, String>>>(
-        PagePaths.scanner,
+    await context.push<List<MapEntry<String, String>>>(PagePaths.scanner,
         extra: ServicePages.values[page]);
-
-    if (r == null) return;
-
-    for (var e in r) {
-      switch (e.key) {
-        case LocaleKeys.idNo:
-          e.value.toInt;
-          break;
-        default:
-      }
-    }
   }
 
   void addPiece(MPiece p) {
@@ -108,9 +96,7 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
 
     service.vehicle = vehicle;
     service.customer = customer;
-
     service.kilometer ??= vehicle.kilometer;
-
     service.customerFullName = customer.getFullName;
     service.plate = vehicle.plate;
 

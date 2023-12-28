@@ -7,10 +7,10 @@ import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart
 import 'package:image_picker/image_picker.dart';
 import 'package:tamirci/core/extensions/ext_string.dart';
 import 'package:tamirci/core/h_hive.dart';
-import 'package:tamirci/core/local_utils.dart';
 import 'package:tamirci/core/local_values.dart';
 import 'package:tamirci/locale_keys.dart';
-import 'package:tamirci/widgets/buttons.dart';
+import 'package:tamirci/pages/image_page/image_page_view.dart';
+import 'package:tamirci/router.dart';
 
 import '../service_page/service_page_view.dart';
 
@@ -31,6 +31,7 @@ class _ScannerPageViewState extends State<ScannerPageView> {
   final List<String> _blocks = [];
 
   bool _showGroup = false;
+  String? path;
 
   @override
   void initState() {
@@ -47,20 +48,24 @@ class _ScannerPageViewState extends State<ScannerPageView> {
   Future<void> _afterBuild() async {
     String? oldPath = HHive.getSettings(HiveSettings.lastScanPath);
 
-    if (oldPath.isNotEmptyAndNull) {
-      final r = await LocalUtils.askYesNo(context, LocaleKeys.useOldImage);
-
-      if (!r) oldPath = null;
-    }
-
     _pickImage(oldPath);
   }
 
   Future<void> _pickImage([String? pathOld]) async {
-    String? path = pathOld;
+    path = pathOld;
 
     if (pathOld.isEmptyOrNull) {
-      final r = await ImagePicker().pickImage(source: ImageSource.camera);
+      final cameraResult = await CustomDialog.showDialogRadioList(
+            context,
+            items: [
+              LocaleKeys.camera,
+              LocaleKeys.gallery,
+            ],
+          ) ??
+          0;
+
+      final r = await ImagePicker().pickImage(
+          source: cameraResult == 0 ? ImageSource.camera : ImageSource.gallery);
       path = r?.path;
     }
 
@@ -84,47 +89,6 @@ class _ScannerPageViewState extends State<ScannerPageView> {
     }
 
     setState(() {});
-
-    if (widget.servicePage != null) _checkTexts();
-  }
-
-  void _checkTexts() {
-    switch (widget.servicePage) {
-      case ServicePages.customer:
-        _customerPage();
-      default:
-    }
-  }
-
-  void _customerPage() {
-    var idRegex = RegExp(r'^\d{11}$');
-    final id = _lines.firstWhereOrNull((element) => idRegex.hasMatch(element));
-    if (id.isNotEmptyAndNull) {
-      _foundValues([MapEntry(LocaleKeys.idNo, id!)]);
-    }
-  }
-
-  Future<void> _foundValues(List<MapEntry<String, String>> values) async {
-    String keys = "";
-    for (var e in values) {
-      keys += "${e.key}, ";
-    }
-    keys = keys.trimRight().removeLast;
-
-    final r = await CustomDialog.showCustomDialog<bool>(
-          context,
-          title: keys,
-          text: LocaleKeys.putDetectedValues,
-          actions: [
-            Buttons(context, LocaleKeys.no, () => context.pop(false)).textB(),
-            Buttons(context, LocaleKeys.yes, () => context.pop(true)).textB(),
-          ],
-        ) ??
-        false;
-
-    if (!r) return;
-
-    context.pop(values);
   }
 
   void _copy(String t) {
@@ -136,6 +100,15 @@ class _ScannerPageViewState extends State<ScannerPageView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          if (path.isNotEmptyAndNull) {
+            context.push(PagePaths.image, extra: MImagePage(path: path));
+          }
+        },
+        label: const Text(LocaleKeys.seeImage),
+        icon: const Icon(Icons.image),
+      ),
       appBar: _appBar(),
       body: _body(),
     );
@@ -181,6 +154,7 @@ class _ScannerPageViewState extends State<ScannerPageView> {
                 shrinkWrap: true,
               ),
             ),
+            context.sizedBox(height: Values.paddingHeightMedium),
           ],
         ),
       ),
