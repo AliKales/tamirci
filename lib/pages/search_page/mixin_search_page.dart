@@ -78,7 +78,7 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
       case _Filter.fullName:
         _searchCustomer(MapEntry("fullName", text.removeSpaces.toLowerCase()));
       case _Filter.chassisNo:
-        _searchVehicle(MapEntry("chassisNo", text));
+        _searchVehicle(MapEntry("chassisNo", text.toUpperCase()));
       case _Filter.engineNo:
         _searchVehicle(MapEntry("engineNo", text));
       default:
@@ -102,6 +102,8 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
     setState(() {
       vehicles = r.response ?? [];
     });
+
+    _scrollToEnd();
   }
 
   Future<void> _searchByIdNo(String text) async {
@@ -191,5 +193,17 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
     context.push(PagePaths.customer, extra: c);
   }
 
-  void onServiceTap(int i) {}
+  Future<void> onVehicleTap(int i) async {
+    CustomProgressIndicator.showProgressIndicator(context);
+    final v = vehicles[i];
+    final r = await FFirestore.getCustomer(id: v.customerID!);
+    context.pop();
+
+    if (r.hasError) {
+      _error(r.exception?.message ?? "");
+      return;
+    }
+
+    context.push(PagePaths.vehicle, extra: MapEntry(r.response!, v));
+  }
 }

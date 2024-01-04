@@ -11,6 +11,7 @@ enum FirestoreCol {
   customers,
   services,
   vehicles,
+  stats,
 }
 
 final class FirestoreSub {
@@ -148,10 +149,9 @@ final class FFirestore {
       } else {
         return FirestoreResponse(
           exception: FirebaseException(
-            plugin: "error",
-            code: "wrong-update-path",
-            message: "Update doc can't be null!"
-          ),
+              plugin: "error",
+              code: "wrong-update-path",
+              message: "Update doc can't be null!"),
         );
       }
     }

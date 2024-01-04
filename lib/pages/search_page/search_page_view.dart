@@ -72,7 +72,7 @@ class _SearchPageViewState extends State<SearchPageView> with _MixinSearchPage {
                 itemBuilder: (context, index) {
                   return VehicleWidget(
                     vehicle: vehicles[index],
-                    onTap: () => onUserTap(index),
+                    onTap: () => onVehicleTap(index),
                   );
                 },
                 itemCount: vehicles.length,

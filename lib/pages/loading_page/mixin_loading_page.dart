@@ -87,4 +87,15 @@ mixin _MixinLoadingPage<T extends StatefulWidget> on State<T> {
     final body = "Ödeme için bir hatırlatma. Kullanıcı ID: ${FAuth.uid}";
     UrlLauncher.sendMail(email, subject, body);
   }
+
+  Future<void> logOut() async {
+    final r = await FAuth.signOut();
+
+    if (r.isNotEmptyAndNull) {
+      CustomSnackbar.showSnackBar(context: context, text: r ?? "Error");
+      return;
+    }
+
+    context.go(PagePaths.login);
+  }
 }

@@ -18,6 +18,7 @@ import 'package:tamirci/pages/loading_page/loading_page_view.dart';
 import 'package:tamirci/pages/main_page/main_page_view.dart';
 import 'package:tamirci/pages/scanner_page/scanner_page_view.dart';
 import 'package:tamirci/pages/search_page/search_page_view.dart';
+import 'package:tamirci/pages/stats_page/stats_page_view.dart';
 import 'package:tamirci/pages/vehicle_page/vehicle_page_view.dart';
 
 import 'pages/service_page/service_page_view.dart';
@@ -37,6 +38,7 @@ abstract class PagePaths {
   static String vehicle = "/vehicle";
   static String iban = "/iban";
   static String image = "/image";
+  static String stats = "/stats";
 }
 
 final appRouter = GoRouter(
@@ -61,6 +63,7 @@ final appRouter = GoRouter(
     AppRoute(PagePaths.createShop, (s) => const CreateShopPageView()),
     AppRoute(PagePaths.search, (s) => const SearchPageView()),
     AppRoute(PagePaths.iban, (s) => const IbanPageView()),
+    AppRoute(PagePaths.stats, (s) => const StatsPageView()),
     AppRoute(
       PagePaths.image,
       (s) => ImagePageView(

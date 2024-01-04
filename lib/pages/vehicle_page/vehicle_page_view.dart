@@ -169,5 +169,17 @@ class _VehiclePageViewState extends State<VehiclePageView> {
     );
   }
 
-  AppBar _appBar() => AppBar(title: const Text(LocaleKeys.vehicle));
+  AppBar _appBar() {
+    return AppBar(
+      title: const Text(LocaleKeys.vehicle),
+      actions: [
+        IconButton(
+          onPressed: () {
+            context.push(PagePaths.customer, extra: widget.data.key);
+          },
+          icon: const Icon(Icons.person_4_rounded),
+        ),
+      ],
+    );
+  }
 }

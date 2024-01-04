@@ -46,6 +46,11 @@ class _MainPageViewState extends State<MainPageView> with _MixinMainPage {
             ),
           ),
           ListTile(
+            title: const Text(LocaleKeys.stats),
+            onTap: goStats,
+            leading: const Icon(Icons.insert_chart_sharp),
+          ),
+          ListTile(
             title: const Text(LocaleKeys.logOut),
             onTap: logOut,
             leading: const Icon(Icons.logout_outlined),

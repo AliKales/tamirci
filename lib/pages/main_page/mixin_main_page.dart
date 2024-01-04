@@ -98,6 +98,10 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
     context.push(PagePaths.iban);
   }
 
+  void goStats() {
+    context.push(PagePaths.stats);
+  }
+
   Future<void> logOut() async {
     final r = await FAuth.signOut();
 

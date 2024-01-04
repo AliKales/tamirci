@@ -108,4 +108,9 @@ final class LocaleKeys {
   static const camera = "Kamera";
   static const gallery = "Galeri";
   static const seeImage = "Görseli gör";
+  static const stats = "İstatistikler";
+  static const chooseMonthYear = "Lütfen görmek istediğiniz ay ve yılı seçiniz.";
+  static const continuee = "Devam Et";
+  static const month = "Ay";
+  static const year = "Yıl";
 }

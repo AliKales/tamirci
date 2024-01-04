@@ -60,6 +60,13 @@ class _LoadingPageViewState extends State<LoadingPageView>
   AppBar _appBar() {
     return AppBar(
       title: const Text(LocaleKeys.datasGetting),
+      actions: [
+        if (!isLoading)
+          IconButton(
+            onPressed: logOut,
+            icon: const Icon(Icons.logout),
+          ),
+      ],
     );
   }
 }
