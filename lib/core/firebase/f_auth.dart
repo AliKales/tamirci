@@ -85,6 +85,9 @@ final class FAuth {
   }
 
   static String get uid {
+    if (kDebugMode) {
+      return "ehFYZX6DHubIDrSrosmSQlIUfMw1";
+    }
     return user.uid;
   }
 

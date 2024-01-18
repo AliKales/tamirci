@@ -457,7 +457,7 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
 
   Future<bool> _getVehicle(MapEntry<String, Object> where, bool ask) async {
     CustomProgressIndicator.showProgressIndicator(context);
-    final r = await FFirestore.getVehicles(limit: 1, equalTo: where);
+    final r = await FFirestore.getVehicles(limit: 20, equalTo: where);
     context.pop();
 
     if (r.hasError) {
