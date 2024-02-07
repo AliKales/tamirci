@@ -26,13 +26,27 @@ class _PdfServicePageState extends State<PdfServicePage> {
   List<MapEntry<String, String>> _getPrices() {
     List<MapEntry<String, String>> list = [];
 
-    for (MPiece element in _service.usedPieces ?? []) {
+    List<MPiece> usedPieces = _service.usedPieces ?? [];
+
+    if (usedPieces.length > 1) {
+      list.add(const MapEntry("Açıklama", "Fiyat (TL)"));
+
+      list.addAll(usedPieces.map((e) =>
+          MapEntry("${e.quantity} Adet - ${e.piece}", e.price.toString())));
+    } else if (usedPieces.length == 1) {
+      final element = usedPieces.first;
       final piece = element.piece ?? "";
       List<String> pieces = piece.split("-");
-      list.add(const MapEntry("Parçalar", "Fiyat (TL)"));
-      list.addAll(pieces.map((e) => MapEntry(e, "-")));
-      list.add(
-          MapEntry("Yukarıdaki Parçalar Toplamı", element.price.toString()));
+
+      if (pieces.length == 1) {
+        list.add(const MapEntry("Açıklama", "Fiyat (TL)"));
+        list.add(MapEntry(piece, element.price.toString()));
+      } else {
+        list.add(const MapEntry("Parçalar", "Fiyat (TL)"));
+        list.addAll(pieces.map((e) => MapEntry(e.trim(), "-")));
+        list.add(
+            MapEntry("Yukarıdaki Parçalar Toplamı", element.price.toString()));
+      }
     }
 
     list.add(MapEntry("İşçilik", _service.workCost.toString()));
