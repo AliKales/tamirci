@@ -16,6 +16,7 @@ import 'package:tamirci/pages/iban_page/iban_page_view.dart';
 import 'package:tamirci/pages/image_page/image_page_view.dart';
 import 'package:tamirci/pages/loading_page/loading_page_view.dart';
 import 'package:tamirci/pages/main_page/main_page_view.dart';
+import 'package:tamirci/pages/pdf_service_page/pdf_service_page.dart';
 import 'package:tamirci/pages/scanner_page/scanner_page_view.dart';
 import 'package:tamirci/pages/search_page/search_page_view.dart';
 import 'package:tamirci/pages/stats_page/stats_page_view.dart';
@@ -39,6 +40,7 @@ abstract class PagePaths {
   static String iban = "/iban";
   static String image = "/image";
   static String stats = "/stats";
+  static String pdfService = "/pdf-service";
 }
 
 final appRouter = GoRouter(
@@ -64,6 +66,12 @@ final appRouter = GoRouter(
     AppRoute(PagePaths.search, (s) => const SearchPageView()),
     AppRoute(PagePaths.iban, (s) => const IbanPageView()),
     AppRoute(PagePaths.stats, (s) => const StatsPageView()),
+    AppRoute(
+      PagePaths.pdfService,
+      (s) => PdfServicePage(
+        service: s.extra as MService,
+      ),
+    ),
     AppRoute(
       PagePaths.image,
       (s) => ImagePageView(

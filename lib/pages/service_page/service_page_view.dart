@@ -137,6 +137,11 @@ class _NewServicePageViewState extends State<ServicePageView>
     return AppBar(
       title: Text(isNew ? LocaleKeys.newService : LocaleKeys.service),
       actions: [
+        if (!kIsWeb && !isNew)
+          IconButton(
+            onPressed: () => context.push(PagePaths.pdfService, extra: service),
+            icon: const Icon(Icons.picture_as_pdf),
+          ),
         if (!kIsWeb && isNew)
           IconButton(
             onPressed: _onScan,
