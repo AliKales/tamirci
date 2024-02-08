@@ -138,7 +138,10 @@ class _NewCustomerViewState extends State<CustomerView>
               style: context.textTheme.titleLarge,
             ),
             PhoneTextField(
-                tECCountryCode: _tECCountryCode, tECPhone: _tECPhone),
+              tECCountryCode: _tECCountryCode,
+              tECPhone: _tECPhone,
+              isNew: widget.isNew,
+            ),
             CTextField(
               label: LocaleKeys.idNo,
               controller: _tECIdNo,

@@ -27,7 +27,7 @@ class ServiceView extends StatefulWidget {
 
 class _ServiceViewState extends State<ServiceView>
     with AutomaticKeepAliveClientMixin {
-  final now = DateTime.now();
+  late DateTime _date;
   final _tECCustomerComplaint = TextEditingController();
   final _tECProblem = TextEditingController();
   final _tECToDone = TextEditingController();
@@ -36,6 +36,8 @@ class _ServiceViewState extends State<ServiceView>
   @override
   void initState() {
     super.initState();
+    _date = widget.service.createdAt ?? DateTime.now();
+
     final c = widget.controller;
     c.receiveService = _receiveService;
 
@@ -83,7 +85,7 @@ class _ServiceViewState extends State<ServiceView>
             CTextField(
               label: LocaleKeys.date,
               readOnly: true,
-              initialValue: now.toStringFromDate,
+              initialValue: _date.toStringFromDate,
             ),
             CTextField(
               label: LocaleKeys.customerComplaint,
