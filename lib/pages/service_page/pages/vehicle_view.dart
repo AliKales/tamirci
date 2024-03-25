@@ -6,6 +6,7 @@ import 'package:tamirci/core/extensions/ext_string.dart';
 import 'package:tamirci/core/extensions/ext_text_controller.dart';
 import 'package:tamirci/core/models/m_vehicle.dart';
 import 'package:tamirci/locale_keys.dart';
+import 'package:tamirci/widgets/buttons.dart';
 import 'package:tamirci/widgets/c_dropdown_menu.dart';
 import 'package:tamirci/widgets/c_text_field.dart';
 
@@ -27,12 +28,14 @@ class VehicleView extends StatefulWidget {
       required this.vehicle,
       required this.controller,
       required this.isNew,
-      required this.onSearchPlate});
+      required this.onSearchPlate,
+      required this.delete});
 
   final MVehicle vehicle;
   final VehicleController controller;
   final bool isNew;
   final ValueChanged<String> onSearchPlate;
+  final VoidCallback delete;
 
   @override
   State<VehicleView> createState() => _VehicleViewState();
@@ -231,6 +234,12 @@ class _VehicleViewState extends State<VehicleView>
                 CKilometerFormatter(),
               ],
             ),
+            if (!widget.isNew)
+              Buttons(
+                context,
+                LocaleKeys.deleteCar,
+                widget.delete,
+              ).filled().center,
             context.sizedBox(height: 0.1),
           ],
         ),

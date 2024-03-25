@@ -95,7 +95,7 @@ final class LocaleKeys {
   static const phoneCantNull = "Telefon numarası boş bırakılamaz";
   static const plateCantNull = "Araç plakası boş bırakılamaz";
   static const thisCustomerAlreadyExistsTryAgain =
-      "Bu müşteri zaten kayıtlı. Müşteri bilgileri otomatik girildi. Lütfen tekrar deneyiniz!";
+      "Bu müşteri zaten kayıtlı. Devam ederseniz aynı telefon numarısı ile yeni bir müşteri oluşturucaksınız!";
   static const thisVehicleAlreadyExistsTryAgain =
       "Bu araç zaten kayıtlı. Araç bilgileri otomatik girildi. Lütfen tekrar deneyiniz!";
   static const nothingChanged = "Hiç birşey değişmedi!";
@@ -115,4 +115,7 @@ final class LocaleKeys {
   static const month = "Ay";
   static const year = "Yıl";
   static const sureToCall = "Aramak istediğinize emin misiniz?";
+  static const deleteService = "Servisi sil";
+  static const deleteCar = "Aracı sil";
+  static const areYouSure = "Emin misin?";
 }

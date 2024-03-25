@@ -83,10 +83,13 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
 
     services![i] = s;
 
-    final r = await context.push<MService>(PagePaths.service, extra: s);
+    final r = await context.push(PagePaths.service, extra: s);
 
-    if (r != null) {
+    if (r != null && r is MService) {
       services![i] = r;
+    } else if (r != null && r is int) {
+      services!.removeAt(i);
+      setState(() {});
     }
   }
 

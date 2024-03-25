@@ -29,12 +29,14 @@ class CustomerView extends StatefulWidget {
     required this.controller,
     required this.isNew,
     required this.onFindCustomer,
+    required this.delete,
   });
 
   final MCustomer customer;
   final CustomerViewController controller;
   final bool isNew;
   final ValueChanged<MapEntry<String, Object>> onFindCustomer;
+  final VoidCallback delete;
 
   @override
   State<CustomerView> createState() => _NewCustomerViewState();
@@ -176,6 +178,12 @@ class _NewCustomerViewState extends State<CustomerView>
               maxLines: null,
               controller: _tECAddress,
             ),
+            if (!widget.isNew)
+              Buttons(
+                context,
+                LocaleKeys.deleteService,
+                widget.delete,
+              ).filled().center,
             SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
           ],
         ),

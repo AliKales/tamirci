@@ -274,15 +274,8 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
       text: LocaleKeys.thisCustomerAlreadyExistsTryAgain,
     );
 
-    setState(() {
-      customer = r.response!.first;
-    });
+    _shouldSetCustomer = true;
 
-    _customerID = r.response?.first.docID;
-
-    customerController.updateTexts?.call();
-
-    _customerExists = true;
 
     return true;
   }
@@ -416,6 +409,49 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
     if (vehicle.customerID.isEmptyOrNull) return;
     _customerExists =
         await _getCustomer(MapEntry("docID", vehicle.customerID!));
+  }
+
+  Future<void> deleteService() async {
+    final sure = await SureDialog.areYouSure(context);
+
+    if (!sure) return;
+
+    await FFirestore.delete(FirestoreCol.shops, FAuth.uid,
+        subs: [FirestoreSub(col: FirestoreCol.services, doc: service.docID!)]);
+    await FFirestore.update(
+      FirestoreCol.shops,
+      FAuth.uid,
+      subs: [
+        FirestoreSub(
+          col: FirestoreCol.customers,
+          doc: customer.docID!,
+        )
+      ],
+      {"serviceCount": FieldValue.increment(-1)},
+    );
+    await FFirestore.update(
+      FirestoreCol.shops,
+      FAuth.uid,
+      subs: [
+        FirestoreSub(
+          col: FirestoreCol.vehicles,
+          doc: vehicle.docID!,
+        )
+      ],
+      {"serviceCount": FieldValue.increment(-1)},
+    );
+
+    context.pop(0);
+  }
+
+  Future<void> deleteCar() async {
+    if (!await SureDialog.areYouSure(context)) return;
+
+    await FFirestore.delete(FirestoreCol.shops, FAuth.uid,
+        subs: [FirestoreSub(col: FirestoreCol.vehicles, doc: vehicle.docID!)]);
+    await FFirestore.delete(FirestoreCol.shops, FAuth.uid,
+        subs: [FirestoreSub(col: FirestoreCol.services, doc: service.docID!)]);
+    context.pop(0);
   }
 
   Future<bool> _getCustomer(MapEntry<String, Object> where) async {

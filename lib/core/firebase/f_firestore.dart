@@ -93,12 +93,23 @@ final class FFirestore {
   static Future<FirestoreResponse> delete(
     FirestoreCol col,
     String doc, {
-    FirestoreCol? col2,
+    List<FirestoreSub>? subs,
   }) async {
     dynamic ref = _instance.collection(col.name).doc(doc);
 
-    if (col2 != null) {
-      ref = ref.collection(col.name);
+    subs ??= [];
+
+    for (var sub in subs) {
+      if (sub.doc.isNotEmptyAndNull) {
+        ref = ref.collection(sub.col.name).doc(sub.doc);
+      } else {
+        return FirestoreResponse(
+          exception: FirebaseException(
+              plugin: "error",
+              code: "wrong-delete-path",
+              message: "Delete doc can't be null!"),
+        );
+      }
     }
 
     final fun = ref.delete();
