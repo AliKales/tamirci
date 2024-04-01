@@ -109,6 +109,10 @@ class _PdfServicePageState extends State<PdfServicePage> {
               style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
             ),
             pw.Text(
+              "Araç KM:    ${_service.kilometer ?? _service.vehicle?.kilometer}",
+              style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Text(
               "Tarih:             ${_service.createdAt!.toStringFromDate}",
               style: pw.TextStyle(fontSize: 22, fontWeight: pw.FontWeight.bold),
             ),
