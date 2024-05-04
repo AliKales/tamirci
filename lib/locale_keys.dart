@@ -118,4 +118,5 @@ final class LocaleKeys {
   static const deleteService = "Servisi sil";
   static const deleteCar = "Aracı sil";
   static const areYouSure = "Emin misin?";
+  static const thisVehicleDeleted = "Bu araç mevcut değil. Silinmiş olabilir!";
 }

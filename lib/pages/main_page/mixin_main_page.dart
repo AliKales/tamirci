@@ -77,7 +77,11 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
             context: context, text: r.exception?.message ?? "");
         return;
       }
-
+      if (r.response?.exists.isFalse ?? true) {
+        CustomSnackbar.showSnackBar(
+            context: context, text: LocaleKeys.thisVehicleDeleted);
+        return;
+      }
       s.vehicle = MVehicle.fromJson(r.response!.data()!);
     }
 

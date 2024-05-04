@@ -276,7 +276,6 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
 
     _shouldSetCustomer = true;
 
-
     return true;
   }
 
@@ -516,18 +515,26 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
       ),
     );
 
+    int? selectedVehicleIndex;
+
     if (ask) {
-      final i = await CustomDialog.showDialogRadioList(
+      selectedVehicleIndex = await CustomDialog.showDialogRadioList(
         context,
         title: LocaleKeys.vehicle,
         items:
             list.map((e) => e.plate?.withSpaces.toUpperCase() ?? "-").toList(),
       );
 
-      if (i == null || i == 0) return false;
+      if (selectedVehicleIndex == null || selectedVehicleIndex == 0) {
+        return false;
+      }
     }
 
-    vehicle = list.last;
+    if (selectedVehicleIndex != null) {
+      vehicle = list[selectedVehicleIndex];
+    } else {
+      vehicle = list.last;
+    }
 
     setState(() {});
 
