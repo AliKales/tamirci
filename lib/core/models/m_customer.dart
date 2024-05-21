@@ -1,4 +1,3 @@
-import 'package:caroby/caroby.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:tamirci/core/json_converters.dart';
@@ -83,7 +82,7 @@ class MCustomer {
   }
 
   String get getFullName {
-    return "${name.capitalize()} ${surname.capitalize()}";
+    return "$name $surname";
   }
 
   String get getPhone {

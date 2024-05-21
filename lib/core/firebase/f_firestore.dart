@@ -149,8 +149,18 @@ final class FFirestore {
     String doc,
     Map<String, dynamic> map, {
     List<FirestoreSub>? subs,
+    bool shopRef = false,
   }) async {
-    var ref = _instance.collection(col.name).doc(doc);
+    DocumentReference<Map<String, dynamic>> ref;
+    if (shopRef) {
+      ref = _instance
+          .collection("shops")
+          .doc(FAuth.uid)
+          .collection(col.name)
+          .doc(doc);
+    } else {
+      ref = _instance.collection(col.name).doc(doc);
+    }
 
     subs ??= [];
 

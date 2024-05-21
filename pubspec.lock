@@ -141,10 +141,10 @@ packages:
     dependency: "direct main"
     description:
       name: caroby
-      sha256: c8b10378b0706bbd66793d9ac07eb29044344e35eea764fe239013dc7bfbd927
+      sha256: "0b45b0afa4b3a0f293c0ad8aaed2f47a28fc7c77b4ac2db3dff9e139b3e654ab"
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.1"
+    version: "0.1.5"
   change_app_package_name:
     dependency: "direct dev"
     description:
