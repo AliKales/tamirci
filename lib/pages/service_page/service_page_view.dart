@@ -26,9 +26,12 @@ import 'pages/vehicle_view.dart';
 part 'mixin_service_page.dart';
 
 class ServicePageView extends StatefulWidget {
-  const ServicePageView({super.key, required this.service});
+  const ServicePageView(
+      {super.key, required this.service, this.findCustomer, this.findVehicle});
 
   final MService? service;
+  final MapEntry<String, Object>? findCustomer;
+  final String? findVehicle;
 
   @override
   State<ServicePageView> createState() => _NewServicePageViewState();

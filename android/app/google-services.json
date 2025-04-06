@@ -2,7 +2,7 @@
   "project_info": {
     "project_number": "319279871515",
     "project_id": "tamirkayit",
-    "storage_bucket": "tamirkayit.appspot.com"
+    "storage_bucket": "tamirkayit.firebasestorage.app"
   },
   "client": [
     {
@@ -10,25 +10,6 @@
         "mobilesdk_app_id": "1:319279871515:android:1d2d6c54d9f8e7e958aabe",
         "android_client_info": {
           "package_name": "com.caroby.tamirci"
-        }
-      },
-      "oauth_client": [],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBcRCjcmyxVAudUbcJRfZRIKvmfvKbMgoc"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": []
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:319279871515:android:b5540a3bd61584f858aabe",
-        "android_client_info": {
-          "package_name": "com.example.tamirci"
         }
       },
       "oauth_client": [],

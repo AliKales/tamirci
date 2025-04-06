@@ -2,7 +2,7 @@
 
 part of 'service_page_view.dart';
 
-mixin _MixinNewService<T extends StatefulWidget> on State<T> {
+mixin _MixinNewService on State<ServicePageView> {
   final controller = PageController();
 
   final customerController = CustomerViewController();
@@ -42,13 +42,23 @@ mixin _MixinNewService<T extends StatefulWidget> on State<T> {
   String? _customerID;
   String? _vehicleID;
 
-  void initialize(MService? s) {
+  Future<void> initialize(MService? s) async {
     if (s != null) {
       service = s;
       customer = s.customer!;
       vehicle = s.vehicle!;
       isNew = false;
     }
+    context.afterBuild(
+      (p0) async {
+        if (widget.findCustomer != null) {
+          await findCustomer(widget.findCustomer!);
+        }
+        if (widget.findVehicle != null) {
+          await findVehicle(widget.findVehicle!);
+        }
+      },
+    );
   }
 
   @override

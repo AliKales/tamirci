@@ -15,15 +15,15 @@ extension ExtStringNull on String? {
     return double.tryParse(this ?? "");
   }
 
-  String substringSafe(int start, [int? end]) {
-    int l = this?.length ?? 0;
-    if (isEmptyOrNull || l < start) {
-      return "";
-    }
-    if (end != null && end > l) end = l;
+  // String substringSafe(int start, [int? end]) {
+  //   int l = this?.length ?? 0;
+  //   if (isEmptyOrNull || l < start) {
+  //     return "";
+  //   }
+  //   if (end != null && end > l) end = l;
 
-    return this!.substring(start, end);
-  }
+  //   return this!.substring(start, end);
+  // }
 
   String get removeSpaces {
     return this?.replaceAll(" ", "") ?? "";

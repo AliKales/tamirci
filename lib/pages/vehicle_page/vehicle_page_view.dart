@@ -9,6 +9,7 @@ import 'package:tamirci/core/models/m_customer.dart';
 import 'package:tamirci/core/models/m_service.dart';
 import 'package:tamirci/core/models/m_vehicle.dart';
 import 'package:tamirci/locale_keys.dart';
+import 'package:tamirci/pages/service_page/service_page_view.dart';
 import 'package:tamirci/router.dart';
 import 'package:tamirci/widgets/buttons.dart';
 import 'package:tamirci/widgets/service_widget/service_widget.dart';
@@ -131,6 +132,16 @@ class _VehiclePageViewState extends State<VehiclePageView> {
                 leading: const Icon(Icons.date_range_rounded),
               ),
               _buttonNListView(),
+              const SizedBox(height: 10),
+              OutlinedButton(
+                onPressed: () {
+                  context.navigatorPush(ServicePageView(
+                    service: null,
+                    findCustomer: MapEntry("docID", _vehicle.customerID!),
+                  ));
+                },
+                child: Text("Yeni servis"),
+              ),
             ],
           ),
         ),

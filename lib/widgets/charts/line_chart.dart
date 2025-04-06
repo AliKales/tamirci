@@ -50,11 +50,11 @@ class _CLineChart extends State<CLineChart> {
     int i = value.toInt();
 
     String text = _datas[i].key;
-
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      child: Text(text, style: style),
-    );
+    return SizedBox.shrink();
+    // return SideTitleWidget(
+    //   axisSide: meta.axisSide,
+    //   child: Text(text, style: style),
+    // );
   }
 
   @override
@@ -163,7 +163,6 @@ class _CLineChart extends State<CLineChart> {
                   }).toList();
                 },
                 touchTooltipData: LineTouchTooltipData(
-                  tooltipBgColor: Colors.pink,
                   tooltipRoundedRadius: 8,
                   getTooltipItems: (List<LineBarSpot> lineBarsSpot) {
                     return lineBarsSpot.map((lineBarSpot) {
