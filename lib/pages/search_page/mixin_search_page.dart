@@ -23,6 +23,7 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
 
   List<MCustomer> customers = [];
   List<MVehicle> vehicles = [];
+  List<String> plates = [];
 
   final tECSearch = TextEditingController();
   String searchText = "";
@@ -43,6 +44,14 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
       isTexting.value = false;
     } else if (!isTexting.value) {
       isTexting.value = true;
+    }
+
+    if (t.isEmptyOrNull) {
+      setState(() {
+        plates = [];
+      });
+    } else {
+      _findPlates(t!);
     }
   }
 
@@ -83,6 +92,16 @@ mixin _MixinSearchPage<T extends StatefulWidget> on State<T> {
         _searchVehicle(MapEntry("engineNo", text));
       default:
     }
+  }
+
+  Future<void> _findPlates(String val) async {
+    final res = await FFirestore.vehicleInstance
+        .where('plate', isGreaterThanOrEqualTo: _getPlate(val))
+        .where('plate', isLessThanOrEqualTo: '${_getPlate(val)}\uf8ff')
+        .limit(10)
+        .get();
+    plates = res.docs.map((e) => MVehicle.fromJson(e.data()).plate!).toList();
+    setState(() {});
   }
 
   String _getPlate(String text) => text.replaceAll(" ", "").toLowerCase();

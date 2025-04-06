@@ -40,6 +40,37 @@ class _SearchPageViewState extends State<SearchPageView> with _MixinSearchPage {
         child: Column(
           children: [
             _searchWidget(),
+            if (plates.isNotEmpty)
+              Container(
+                width: double.maxFinite,
+                height: 0.2.toDynamicHeight(context),
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.colorScheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: ListView.builder(
+                  itemCount: plates.length,
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        tECSearch.text = plates[index].toString();
+                        setState(() {
+                          plates.clear();
+                        });
+                        search();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          plates[index].toUpperCase(),
+                          style: context.textTheme.titleMedium,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ...List.generate(
               _Filter.values.length,
               (index) => RadioListTile<_Filter>(

@@ -50,6 +50,8 @@ final class FFirestore {
   static final _vehicleInstance =
       _shopInstance.collection(FirestoreCol.vehicles.name);
 
+  static CollectionReference<Map<String, dynamic>>  get vehicleInstance => _vehicleInstance;
+
   static final List<MCustomer> _customers = [];
 
   static FirebaseException _firebaseException(dynamic exception) {
