@@ -129,8 +129,9 @@ class _CustomerEditPageViewState extends State<CustomerEditPageView> {
     context.pop();
   }
 
-  void _saveName() {
-    FFirestore.update(
+  Future<void> _saveName() async {
+    CustomProgressIndicator.showProgressIndicator(context);
+    await FFirestore.update(
       FirestoreCol.customers,
       _id,
       {
@@ -140,9 +141,20 @@ class _CustomerEditPageViewState extends State<CustomerEditPageView> {
       },
       shopRef: true,
     );
+    final res = await FFirestore.getServices(
+      equalTo: [MapEntry("customerID", widget.customer.docID!)],
+      limit: 30,
+    );
+
+    for (var element in res.response!) {
+      await FFirestore.update(FirestoreCol.services, element.docID!,
+          {"customerFullName": "${_tECName.textTrim} ${_tECSurname.textTrim}"},
+          shopRef: true);
+    }
     widget.customer.name = _tECName.textTrim;
     widget.customer.surname = _tECSurname.textTrim;
     widget.customer.fullName = "${_tECName.textTrim} ${_tECSurname.textTrim}";
+    context.pop();
     context.pop();
   }
 
