@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:tamirci/core/extensions/ext_object.dart';
 import 'package:tamirci/core/extensions/ext_string.dart';
 import 'package:tamirci/core/extensions/ext_text_controller.dart';
+import 'package:tamirci/core/firebase/f_firestore.dart';
 import 'package:tamirci/core/models/m_vehicle.dart';
 import 'package:tamirci/locale_keys.dart';
 import 'package:tamirci/widgets/buttons.dart';
@@ -154,6 +155,13 @@ class _VehicleViewState extends State<VehicleView>
     widget.onSearchPlate.call(p);
   }
 
+  Future<void> _save() async {
+    await FFirestore.update(FirestoreCol.vehicles, widget.vehicle.docID!,
+        _receiveVehicle(widget.vehicle).toJson(),
+        shopRef: true);
+    CustomSnackbar.showSnackBar(context: context, text: "Kaydedildi");
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -234,12 +242,18 @@ class _VehicleViewState extends State<VehicleView>
                 CKilometerFormatter(),
               ],
             ),
-            if (!widget.isNew)
+            if (!widget.isNew) ...[
               Buttons(
                 context,
                 LocaleKeys.deleteCar,
                 widget.delete,
               ).filled().center,
+              Buttons(
+                context,
+                "KAYDET",
+                _save,
+              ).outlined().center,
+            ],
             context.sizedBox(height: 0.1),
           ],
         ),
