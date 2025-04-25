@@ -156,9 +156,22 @@ class _VehicleViewState extends State<VehicleView>
   }
 
   Future<void> _save() async {
-    await FFirestore.update(FirestoreCol.vehicles, widget.vehicle.docID!,
-        _receiveVehicle(widget.vehicle).toJson(),
+    final newVehicle = _receiveVehicle(widget.vehicle);
+    await FFirestore.update(
+        FirestoreCol.vehicles, widget.vehicle.docID!, newVehicle.toJson(),
         shopRef: true);
+    if (newVehicle.plate != widget.vehicle.plate) {
+      final res = await FFirestore.getServices(
+        equalTo: [MapEntry("vehicleID", widget.vehicle.docID!)],
+        limit: 30,
+      );
+
+      for (var element in res.response!) {
+        await FFirestore.update(
+            FirestoreCol.services, element.docID!, {"plate": newVehicle.plate},
+            shopRef: true);
+      }
+    }
     CustomSnackbar.showSnackBar(context: context, text: "Kaydedildi");
   }
 
