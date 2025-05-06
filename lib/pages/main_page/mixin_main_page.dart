@@ -12,11 +12,16 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
   void initState() {
     super.initState();
 
-    context.afterBuild((p0) => _afterBuild());
+    context.afterBuild((p0) => load());
   }
 
-  Future<void> _afterBuild() async {
-    final r = await FFirestore.getServices();
+  Future<void> load() async {
+    CustomProgressIndicator.showProgressIndicator(context);
+    final r = await FFirestore.getServices(
+      limit: 20,
+      lastDate: services?.lastOrNull?.createdAt,
+    );
+    context.pop();
     if (r.hasError) {
       setState(() {
         isError = true;
@@ -24,7 +29,8 @@ mixin _MixinMainPage<T extends StatefulWidget> on State<T> {
       return;
     }
 
-    services = r.response ?? [];
+    services ??= [];
+    services!.addAll((r.response ?? []));
     setState(() {});
   }
 
